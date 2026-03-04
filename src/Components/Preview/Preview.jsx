@@ -917,11 +917,12 @@ function Preview() {
 
 const pollingRef = useRef(null);
   const handleExtractionEntities = () => {
+    let templateId = location?.state?.isExtract ? location?.state?.template_id : template
   requestL({
     url: `/entities/${location?.state?.contract_id}/${location?.state?.version_number}`,
     method: "GET",
     params: {
-      template_id:template ?? location?.state?.template_id,
+      template_id:templateId,
     },
   })
     .then((res) => {
@@ -1685,7 +1686,8 @@ const fetchContractPricing =()=>{
               ) : isViewEntities ? (
                 <>
                   <div className="prev-acc-box">
-                    <div className="d-flex align-items-center">
+                    {
+                      !location?.state?.isExtract && <div className="d-flex align-items-center">
                       <h5 className="acc-head">Select Entity Template</h5>
                     <div>
                                     <Select
@@ -1697,6 +1699,8 @@ const fetchContractPricing =()=>{
                                     />
                     </div>
                     </div>
+                    }
+                    
                     
                     {isLoading ? (
                       <>

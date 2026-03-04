@@ -174,7 +174,8 @@ useEffect(() => {
       navigate('/list/preview',{state:{
         contract_id:contractExtraction?.contract_id,
         template_id:selectedTemplate?.template_id,
-        version_number:contractExtraction?.latest_amendment_number
+        version_number:contractExtraction?.latest_amendment_number,
+        isExtract:true
       }})
     }).catch((err)=>{
       console.log(err)
