@@ -1,0 +1,43 @@
+.patient-match{
+    font-size: 13px;
+}
+
+.patients-table tr,th,td{
+    font-size: 12px;
+    text-align: center;
+}
+
+.patients-table th{
+    color: rgb(128, 128, 128,0.9);
+    font-weight: 500;
+
+}
+
+.patient-btn{
+    font-size: 13px;
+}
+
+.patients-list-btn{
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+.patients-list-btn button{
+    font-size: 12px;
+    margin-right: 10px;
+    padding: 3px 8px;
+    border: 1px solid rgba(118, 118, 118, 0.5);
+    border-radius: 2px;
+    background-color: white;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.patients-list-btn .run-check{
+    --tw-bg-opacity: 1;
+    background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+
+}
+

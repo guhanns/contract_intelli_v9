@@ -1,0 +1,189 @@
+.restatement-title h6{
+    color:var( --restatement-title);
+    font-family:"Inter";
+  font-weight: 500;
+   font-size:20px;
+   padding-left: 16px;
+   padding-top: 15px;
+   padding-bottom: 10px;
+}
+.restatement-title{
+    border-bottom: 1px solid var( --restatement-border-bottom);
+}
+.select-base-doc{
+  display: flex;
+  justify-content: space-between;
+}
+.select-base-doc h6{
+     color:var(--restatement-base-title);
+    font-family:"Inter";
+  font-weight: 500;
+   font-size:16px;
+   padding-left: 16px;
+   padding-top: 29px;
+   padding-bottom: 10px;
+}
+.restatement-table-container{
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-top: 25px;
+}
+
+
+.restatement-table-title{
+       border: 1px solid var(--restatement-border);;
+        border-radius: 12px;
+
+}
+
+
+.restatement-table-title th{
+    text-align: start;
+}
+.restatement-table-title .docname{
+   padding: 12px;
+   color:var(--restatement-datas);
+   font-family:"Inter";
+   font-weight: 500;
+   font-size:12px;
+    background-color:var(--restatement-background-title-table); 
+     
+
+}
+.restatement-table-title .version{
+    padding: 12px;
+   color:var(--restatement-datas);
+   font-family:"Inter";
+   font-weight: 500;
+   font-size:12px;
+      background-color:var(--restatement-background-title-table); 
+}
+.restatement-table-title .doc-type{
+    padding: 12px;
+    color:var(--restatement-datas);
+   font-family:"Inter";
+   font-weight: 500;
+   font-size:12px;
+        background-color:var(--restatement-background-title-table); 
+}
+.restatement-table-title .customer{
+    padding: 12px;
+       color:var(--restatement-datas);
+   font-family:"Inter";
+   font-weight: 500;
+   font-size:12px;
+     background-color:var(--restatement-background-title-table); 
+}
+.restatement-table-title .author{
+    padding: 12px;
+       color:var(--restatement-datas);
+   font-family:"Inter";
+   font-weight: 500;
+   font-size:12px;
+       background-color:var(--restatement-background-title-table); 
+}
+.restatement-table-title .date{
+    padding: 12px;
+     color:var(--restatement-datas);
+   font-family:"Inter";
+   font-weight: 500;
+   font-size:12px;
+      background-color:var(--restatement-background-title-table); 
+}
+.restatement-values .document-data{
+background-color:var(--restatement-background-table);
+padding: 12px;
+
+}
+
+.restatement-values :hover{
+  background-color: var(--restatement-hover)!important;
+  cursor: pointer;
+}
+.restatement-values .document-data .pdf{
+   color: var(--restatement-pdf-title);
+   padding-left: 12px;
+   font-family:"Inter";
+  font-weight: 500;
+  font-size:14px;
+
+}
+.restatement-values .version-data{
+     background-color:var(--restatement-background-table);
+  padding: 12px;
+color:var(--restatement-datas);
+  font-family:"Inter";
+font-weight: 400;
+font-size:14px;
+}
+.restatement-values .doc-type-data{
+      background-color:var(--restatement-background-table);
+  padding: 12px;
+color:var(--restatement-datas);
+  font-family:"Inter";
+font-weight: 400;
+font-size:14px;
+}
+.restatement-values .customer-datas{
+     background-color:var(--restatement-background-table);
+  padding: 12px;
+ color:var(--restatement-datas);
+  font-family:"Inter";
+font-weight: 400;
+font-size:14px;
+}
+.restatement-values .author-data{
+         background-color:var(--restatement-background-table);
+  padding: 12px;
+color:var(--restatement-datas);
+  font-family:"Inter";
+font-weight: 400;
+font-size:14px;
+}
+.restatement-values  .date-data{
+     background-color: var(--restatement-background-table);
+  padding: 12px;
+ color:var(--restatement-datas);
+  font-family:"Inter";
+font-weight: 400;
+font-size:14px;
+}
+.restatement-values{
+    border: 1px solid var(--restatement-border);
+}
+.select-base-doc {
+  display: flex;
+  justify-content: space-between !important;
+  align-items: center;
+}
+ .search-containers {
+  position: relative;
+  padding-right: 20px;
+  padding-top: 20px;
+
+}
+.search-containers img{
+  position: absolute;
+  left: 12px;
+  top: 64%;
+  width: 20px;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+.search-containers input {
+  width: 500px;
+  padding: 10px 12px 10px 40px;
+  border: 1px solid var(  --restatement-input-border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  color: #85888E;
+  background-color:var(--restatement-input-bg);
+}
+
+
+
+
+
+ 

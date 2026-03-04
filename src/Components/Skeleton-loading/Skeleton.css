@@ -1,0 +1,103 @@
+.table-display-wrap {
+  width: 100%;
+  padding: 0 20px;
+  position: absolute;
+  top: 30%;
+  left: 0;
+}
+
+.table-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.table-item {
+  width: 100%;
+  height: 15px;
+  padding: 0 10px;
+}
+
+.top-part {
+  width: 100%;
+  padding: 0 30px 0 0;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0 50px 0;
+}
+
+.links-skel {
+  margin-left: 30px;
+}
+
+.removeHeight {
+  height: auto;
+}
+
+.card-view-loader-wrap .card-view-list-item {
+  background: var(--white);
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.04);
+  padding: 16px;
+  min-height: 180px;
+}
+
+.card-view-loader-wrap.card-board {
+  margin: 10px 0;
+}
+
+.card-view-loader-wrap.card-board .card-view-list-item {
+  min-height: auto;
+}
+
+.card-view-loader-wrap.card-header-loader .card-view-list-item {
+  min-height: auto;
+  border: 2px solid var(--bg-border);
+  background: #1f242f;
+}
+
+.tenders-table-item {
+  width: 100%;
+  height: 8px;
+}
+
+/* Full Screen Chat selection */
+
+.chat-skeleton {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+.date-indicator-skeleton {
+  align-self: center;
+  margin-bottom: 16px;
+}
+
+.message-skeleton {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.skeleton-received {
+  background: var(--chat-sent-bg);
+  /* border: 1px solid red; */
+  width: 30%;
+}
+
+.skeleton-sent {
+  align-self: flex-end;
+  background: var(--chat-received-bg);
+  /* color: #ffffff; */
+  /* border: 1px solid green; */
+  width: 30%;
+  text-align: right;
+}
+
+
+.react-loading-skeleton {
+  --base-color: var(--skeleton-base-color);
+}

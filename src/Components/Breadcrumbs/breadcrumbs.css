@@ -1,0 +1,29 @@
+.app-breadcrumb > ol {
+    margin-bottom: 0;
+  }
+  
+  .app-breadcrumb > ol > li > a.breadcrumb-link {
+    font-family: var(--font-regular) !important;
+    font-size: var(--small) !important;
+    color: var(--bg-dark-3) !important;
+    text-transform: capitalize !important;
+    line-height: 1.8 !important;
+    text-decoration: none;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 20ch;
+    white-space: nowrap;
+  }
+  
+  .app-breadcrumb > ol > li:last-child > a.breadcrumb-link {
+    font-family: var(--font-semibold) !important;
+    font-size: var(--default) !important;
+    color: var(--primary-color) !important;
+    max-width: 20ch;
+    width: auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+  }

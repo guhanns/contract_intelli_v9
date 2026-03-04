@@ -1,0 +1,824 @@
+@import url('./Components/Pages/root.css');
+
+.pagination {
+    display: flex;
+    margin: 30px 0;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    padding: 6px;
+  }
+  
+  .page-item {
+    margin: 0;
+  }
+  
+  .page-link:hover {
+    background: none;
+  }
+  
+  .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    font-family: var(--font-medium);
+    font-size: var(--default);
+    border-radius: 4px !important;
+    background: none !important;
+    color: var(--bg-dark-6) !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+  
+  .page-item.active .page-link {
+    font-family: var(--font-semibold);
+    font-size: var(--normal);
+    border: none !important;
+    border-radius: 4px !important;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    color: var(--black-30) !important;
+  }
+
+  .page-link img{
+    width: 40px;
+    height: 20px;
+  }
+  
+  .page-link:focus,
+  .page-link:focus-within,
+  .page-link:visited,
+  .page-link:active {
+    box-shadow: none;
+    background-color: none;
+    color: var(--bg-dark-2);
+  }
+  
+  .page-item.active .page-link.invoice {
+    background: #5c00ac !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.deals {
+    background: #68b984 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.contacts {
+    background: #009eff !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.clients {
+    background: #307ff4 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.teams {
+    background: #8758ff !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.bookings {
+    background: #4793b4 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.projects {
+    background: #8d9eff !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.tenders {
+    background: #7e89bc !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.tenders-settings {
+    background: #307ff4 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.workshop {
+    background: #8d9eff !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.training {
+    background: #00abc1 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.updates {
+    background: #e14d2a !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.properties {
+    background: #59bca8 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.properties-settings {
+    background: #00abc1 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.todo {
+    background: #ffd000 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.servicedesk {
+    background: #975c8d !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.incident {
+    background: #4e31aa !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.directory {
+    background: #9e7676 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.deals-orange {
+    background: #ff6f00 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.email {
+    background: #307ff4 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.feedback {
+    background: #8d9eff !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.file {
+    background: #4793b4 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.pay {
+    background: #76aa31 !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.active .page-link.password-manager {
+    background: #175d4a !important;
+    color: var(--white) !important;
+  }
+  
+  .page-item.disabled .page-link i {
+    font-size: var(--normal);
+    color: var(--bg-dark-6);
+    cursor: pointer !important;
+  }
+  
+  .page-link:focus,
+  .page-link:focus-within,
+  .page-link:visited,
+  .page-link:active {
+    box-shadow: none;
+    background-color: none;
+    color: var(--bg-dark-2);
+  }
+  
+  .form-control:disabled,
+  .form-control[readonly] {
+    background-color: #f2f2f2f2;
+  }
+  
+
+
+:root[data-theme="Light"] {
+  --white-bg:#FFFFFF;
+  --bg: #FFFFFF;
+   --bg-primary:#F9FAFB;
+  --bg-secondary:#FFFFFF;
+  --bg-secondary2:#F9FAFB;
+  --text: #101828;
+  --sidebar:#FFFFFF;
+  --sidebar-top:#FFFFFF;
+  --sidebar-border:#E4E7EC;
+  --menu-bg:#F9FAFB;
+  --border:#E4E7EC;
+  --topbar-border:#E4E7EC;
+  --text-primary :#101828;
+  --text-teritary:#475467;
+  --text-secondary:#344054;
+   --text-brand-secondary:#531DAB;
+   --list-bg:#FFFFFF;
+   --input-border:#D0D5DD;
+   --placeholder-text:#667085;
+   --dropdown-arrow:#98A2B3;
+   --input-border-active:#9254DE;
+   --filter-btn-hover:#F9FAFB;
+   --link-color:#531DAB;
+   --clear-btn:#531DAB;
+    --nav-tab-active:#FFFFFF;
+    --badge-bg:#F9FAFB;
+    --badge-bg-active:#EFF8FF;
+    --badge-color-active:#175CD3;
+    --badge-active-border:#B2DDFF;
+    --utility-blue:#EFF8FF;
+    --utility-pink:#FDF2FA;
+    --utility-pink-border:#FCCEEE;
+    --utility-success:#ECFDF3;
+    --utility-border-pink:#FCCEEE;
+    --utility-success-border:#ABEFC6;
+    --checkbox-background-color:#722ED1;
+    --custom-checkbox-background-color:#FFFFFF;
+   --login-sso-background-color:#FFFFFF;
+   --login-sso-button-text-color:##344054;
+   --custom-checkbox-border-color:#2c2c2e;
+   --remeber-me-checkbox-container:#344054;
+   --forgot-pw-login:#531DAB;
+   --Topbar-background:#FFFFFF;
+   --Sidebar-background:#FFFFFF;
+   --Sidebar-top-background:#FFFFFF;
+   --Sidebar-top-border:#E4E7EC;
+--side-menu-box-hover-bg:#F2F4F7;
+--side-menu-box-active-bg:#F2F4F7;
+--upload-head-back:#85888E;
+--upload-heading:#101828;
+--upload-info:#475467;
+--upload-box-dotted:#D0D5DD;
+--upload-box-bg-color:#ffffff;
+--section-main-section:#f5f5f5;
+--uploaded-box-bg-color:#ffffff;
+--dottedbox-upload-content:#53389E;
+--upload-box-hover-background-color:#F9FAFB;
+--uploaded-box-hover-content:#F9FAFB;
+--uploaded-doc-uploaded-file-name:#101828;
+--trash-round-hover:#F9FAFB;
+--contarct-file-head:#101828;
+--contract-file-upload-bg:#ffffff;
+--contarct-file-upload-button-font:#531DAB;
+--contarct-file-upload-button-border:#1018280D;
+--contact-file-upload-button-hover-bg:#F9FAFB;
+--count-result-head:#475467;
+--count-resul-result:#101828;
+--total-contarct-border:#E4E7EC;
+--contarct-table-border:#E4E7EC;
+--contract-table-bg-color:#e4e7ec;
+--contract-list-table-color:#475467;
+/* --initial-chat-chat-user:#101828;
+--initial-chat-chat-help:#94969C;
+--initial-main-chat-box:#FBF0FF;
+--initial-chat-search-input:#FFFFFF;
+--initial-chat-search-border:#D0D5DD;
+--initial-chat-search-input-text:#667085;
+--initial-chat-bot-color:#344054;
+--initial-chat-bot-loader-border:#E4E7EC;
+--initial-chat-bot-back:#FFFFFF;
+--initial-srm-logo:#FFFFFF;
+--initial-chat-bot-ball:#475467; */
+--initial-chat-chat-user:#101828;
+--initial-chat-chat-help:#94969C;
+--initial-main-chat-box:#F5F5F5;
+--initial-chat-search-input:#FFFFFF;
+--initial-chat-search-border:#D0D5DD;
+--initial-chat-search-input-text:#344054;
+--initial-chat-bot-color:#344054;
+--initial-chat-bot-loader-border:#E4E7EC;
+--initial-chat-bot-back:#FFFFFF;
+--initial-srm-logo:#FFFFFF;
+--initial-chat-bot-ball:#475467;
+--initial-small-box:#FFFFFF;
+--initial-small-box-border:#E4E7EC;
+--initial-small-box-content:#475467;
+--initial-bot-chat-msg:#101828;
+--initial-ex-link-hover:rgba(152, 162, 179, 0.5);
+--initial-pdf-head:#101828;
+--initial-pdf-contract:#94969C;
+--initial-pdf-border-bottom:#E4E7EC;
+--initial-pdf-nav:#FFFFFF;
+--initial-pdf-bg:#FFFFFF;
+--initial-tab1-active:#FAF0FF;
+--initial-tab1-hover:#FAF0FF;
+--initial-divider-line:#94969C33;
+--initial-tab1-active-font:#531DAB;
+--prev-acc-box-btn-back:#161B26;
+--prev-accor-btn:#F5F5F6;
+--Table-contract-list-contract-result-list-hover:#F9FAFB;
+--contract-result-list-status-box-review:#ecfdf3;
+--contract-result-list-status-box-review-border:#ABEFC6;
+--contract-result-list-status-box-review-txt-color:#067647;
+--contract-result-list-status-box-analyse:#eff8ff;
+--contract-result-list-status-box-analyse-border:#B2DDFF;
+--contract-result-list-status-box-analyse-txt-color:#175cd3;
+--doc-nav-head-back:#101828;
+--doc-nav-bg-color:#FFFFFF;
+--doc-nav-border-color:#E4E7EC;
+--doc-nav-next-page-count:#101828;
+--dash-total-bg-color:#FFFFFF;
+--dash-total-text-color:#475467;
+--dash-file-img-bg:#F9F0FF;
+--dash-file-count-color:#101828;
+--contract-list-bg-color:#f5f5f5;
+--toogle-button-bg-color:#FFFFFF;
+--toogle-button-border-color:#D0D5DD;
+--toogle-button-toogle-border-right:#D0D5DD;
+--toogle-button-on-hover:#F9FAFB;
+--grid-card-bg:#FFFFFF;
+--grid-card-border:#E4E7EC;
+--grid-hover:#F9FAFB;
+--grid-card-head:#0F1219;
+--grid-card-h6:#475467;
+--grid-ver-no:#475467;
+--grid-status-bg:#ECFDF3;
+--grid-status-txt:#067647;
+--grid-type-color:#475467;
+--grid-type-txt:#101828;
+--grid-start:#475467;
+--grid-date-value:#101828;
+--product-pricing-heading:#101828;
+--document-selected-head:#101828;
+--pricing-table-box-bg-color:#ffffff;
+--contract-search-bar:#FFFFFF;
+--contract-radio-btn:#94969C;
+--contract-head-btn:#101828;
+--contract-head-btntwo:#475467;
+--contract-head-doc:#475467;
+--contract-head-adjus:#475467;
+--contract-head-source:#475467;
+--contract-bottom-filter:#FFFFFF;
+--contract-bottom-filter-border:#E4E7EC;
+--contract-clear-btn:#344054;
+--contract-btn-back:#FFFFFF;
+--contract-btn-border:#D0D5DD;
+--contract-btn-filter:#FFFFFF;
+--contract-btn-filter-back:#722ED1;
+--contract-details-bg:#FFFFFF;
+--contract-details-font:#101828;
+--contract-details-font-below:#94969C;
+--contract-checkbox-bg:#FFFFFF;
+--contract-checkbox-border:#D0D5DD;
+--contract-event-topbar:#E4E7EC;
+--contract-event-topbar-sub:#FFFFFF;
+--contract-event-topsub-text:#344054;
+--contract-detail-box-bg:#FFFFFF;
+--contract-detail-box-head:#101828;
+--contract-detail-box-bottom:#E4E7EC;
+--contract-tot-box:#FFFFFF;
+--contract-accordian-box:#E4E7EC;
+--webkit-scrollbar-track:#E4E7EC;
+--webkit-scrollbar-thumb:#94969C;
+--select-option-bg-color:#ffffff;
+--select-option-boder-focused:#1018280D;
+--select-option-border-onhover:#9254DE;
+--document-type-font-color:#101828;
+--document-type-hover:#e9e9e9;
+--bg-color-select-still:#FFFFFF;
+--select-document-type-border:#E4E7EC;
+--preview-acc-accordion-button-collapsed:#FFFFFF;
+--preview-acc-accordion-button-collapsed-font:#101828;
+--preview-acc-accordion-button-not-collapsed:#E4E7EC;
+--tiered-list-bg:#F2F4F7;
+--tiered-list-border:#E4E7EC;
+--tiered-list-list-bg:#F2F4F7;
+--tiered-list-border-top-bottom:#E4E7EC;
+--acc-list-data-bg:#F2F4F7;
+--contract-accordian-clicked-text:#101828;
+--contract-accordian-clicked-bg:#E4E7EC;
+--contract-btn-content-bg:#E4E7EC;
+--contract-btn-content-bg-text:#edeef1;
+--contract-tier-table-bg:#E4E7EC;
+--contract-tier-table-data:#101828;
+--contract-tier-table-border:#D0D5DD;
+--contract-tier-table-data-border:#E4E7EC;
+--contract-tier-table-td-bg:#FFFFFF;
+--contract-tier-table-td:#475467;
+--contract-tier-table-left-data:#101828;
+--contract-details-tot-border:#E4E7EC;
+--contract-acc-list-data:#E4E7EC;
+--pricing-table-border:#E4E7EC;
+--pricing-table-bg:#FFFFFF;
+--pricing-table-th-bg:#E4E7EC;
+--pricing-table-th-bgthree:#FFFFFF;
+--pricing-table-borderthree:#E4E7EC;
+--pricing-table-two-text:#101828;
+--pricing-table-two-text-bg:#F5F5F6;
+--pricing-table-ndc:#101828;
+--pricing-table-savi-text:#101828;
+--pricinf-table-dollarfont:#17B26A;
+--pricing-table-border-bottom:#E4E7EC;
+--pricing-table-total-border:#E4E7EC;
+--pricing-table-border-total-price:#E4E7EC;
+--pricing-evehealth-scrollbar:#D0D5DD;
+--skeleton-base-color: #d8d8d8;
+--accordion-header-border-color:#E4E7EC;
+--entities-bg:#FFFFFF;
+--tier-summary-bg:#FFFFFF;
+--tier-level-head:#101828;
+--contract-radio-btn:#101828;
+--contract-btn-content-bg-text:#101828;
+--viewer-pdf-toolbar-background-color:#F5F5F5;
+--tiered-acc-head-bg:#E4E7EC;
+--tiered-acc-body-bg:#F2F4F7;
+--preview-acc-body-border-top:none;
+ --tier-summary-level-bg:#F2F4F7;
+ --preview-li-span-text-color:#475467;
+ --border-color-status-icon:#ABEFC6;
+ --contract-accordion-head-bg:#F2F4F7;
+ --chat-active-entities-border:#E4E7EC;
+ --react-select-border-color:#D0D5DD;
+ --contract-radio-btn-border:#D0D5DD;
+  --changes-head-border:#D0D5DD;
+ --changes-items-bg:#FFFFFF;
+--changes-item-border:#E4E7EC;
+--replaced-badge-bg:#EFF8FF;
+--replaced-badge-border:#B2DDFF;
+--replaced-badge-text-color:#175CD3;
+--removed-badge-bg:#FEF3F2;
+--removed-badge-txt-color:#B42318;
+--removed-badge-border:#FECDCA;
+--added-badge-bg:#ECFDF3;
+--added-badge-txt-color:#067647;
+--added-badge-border:#ABEFC6;
+--modal-bg-explain:#ffffff;
+--modal-title-text-color:#000000;
+--contract-comment-title:#FFFFFF;
+--contract-comment-title-head:#101828;
+--contract-comment-title-border:#D0D5DD;
+--contract-comment-body:#FFFFFF;
+--contract-body-title-name-of-cust:#101828;
+--contract-comment-yesterday:#475467;
+--contract-comment-cust:#FFFFFF;
+--contract-comment-cust-para:#101828;
+--contract-comment-cust-para-border:#E4E7EC;
+--border-ppt-color:#E4E7EC;
+--table-bg-initial-original:#ffffff;
+ --contract-details-table: #FFFFFF;
+ --contract-hover-edit:#FFFFFF;
+  --edit-tier-level-title:#101828;
+  --tier-level-bodycontents:#344054;
+  --restatement-title:#101828;
+    --restatement-border-bottom:#E4E7EC;
+     --restatement-base-title:#101828;
+     --restatement-background-table:#FFFFFF;
+      --restatement-background-title-table: #F2F4F7;
+      --restatement-pdf-title:#101828;
+      --restatement-datas:#475467;
+      --restatement-border:#E4E7EC;
+       --restatement-hover:#F9FAFB;
+       --restatement-input-bg:#FFFFFF;
+             --restatement-input-border:#D0D5DD ;
+              --audit-title: #101828;
+              --audit-filters-data:#667085;
+                --audit-border:#E4E7EC;
+                --audit-btngroup:#FFFFFF;
+                   --audit-btn-active:#F2F4F7;
+                   --audit-btn-font:#344054;
+                   --audit-normal-font:#344054;
+                   --audit-search-input:#FFFFFF;
+                     --audit-seach-color:#667085;
+                      --off-canves-icm-bg:#ffffff;
+  --sec-list-layout-bg:#ffffff;
+  --sec-list-layout-txt-colour:#182230;
+   --layou-header-txt-colour:#101828;
+  --change-history-h3-headeer:#101828;         
+           --clauses-added-header-color:#101828 ;     
+--clr-btn-chnge-page-btm-bg-colour:#FFFFFF;
+--clr-btn-chnge-page-btm-txt-colour:#344054;
+--contract-list-table-color:#101828;
+--modal-text-area:#101828;
+--comments-modaltext-are:#101828;
+--comments-sec-title:#344054;
+--contract-list-table-color:#475467;
+--contracts-table-first-doc:#101828
+
+}
+
+:root[data-theme="Dark"] {
+  --contract-radio-btn:#94969C;
+  --contract-btn-content-bg-text:#F5F5F6;
+  --white-bg:#0C111D;
+  --viewer-pdf-toolbar-background-color:#0C111D;
+  --bg: #0C111D;
+  --tier-summary-bg:#0C111D;
+  --bg-secondary:#161B26;
+  --bg-secondary2:#161B26;
+  --bg-primary:#0C111D;
+  --text: #F5F5F6;
+  --sidebar:#0C111D;
+  --sidebar-top:#0C111D;
+  --sidebar-border:#1F242F;
+  --menu-bg:#1F242F;
+   --border:#1F242F;
+  --topbar-border:#1F242F;
+  --text-primary:#F5F5F6;
+  --text-teritary:#94969C;
+   --text-secondary:#CECFD2;
+  --text-brand-secondary:#531DAB;
+  --list-bg:#1F242F;
+  --input-border:#1F242F;
+   --placeholder-text:#85888E;
+   --dropdown-arrow:#85888E;
+   --filter-btn-hover:#1F242F;
+   --link-color:#CECFD2;
+   --clear-btn:#CECFD2;
+   --nav-tab-active:#161B26;
+   --badge-bg:#161B26;
+   --badge-bg-active:#102A56;
+   --badge-color-active:#84CAFF;
+   --badge-active-border:#1849A9;
+   --utility-blue:#102A56;
+   --utility-pink:#4E0D30;
+   --utility-pink-border:#9E165F;
+   --utility-success:#053321;
+   --utility-success-border:#085D3A;
+   --checkbox-background-color:#722ED1;
+   --custom-checkbox-background-color:#2c2c2e;
+   --login-sso-background-color:#1F242F;
+   --login-sso-button-text-color:#CECFD2;
+   --custom-checkbox-border-color:#2c2c2e;
+   --remeber-me-checkbox-container:#CECFD2;
+   --forgot-pw-login:#CECFD2;
+   --Topbar-background:#0C111D;
+   --Sidebar-background:#0C111D;
+   --Sidebar-top-background:#0C111D;
+   --Sidebar-top-border:#1F242F;
+--side-menu-box-hover-bg:#1F242F;
+--side-menu-box-active-bg:#1F242F;
+--upload-head-back:#F5F5F6;
+--upload-heading:#F5F5F6;
+--upload-info:#D0D5DD;
+--upload-box-dotted:#85888E;
+--upload-box-bg-color:#161b26;
+--section-main-section:#0C111D;
+--uploaded-box-bg-color:#161b26;
+--dottedbox-upload-content:#F5F5F6;
+--upload-box-hover-background-color:#1F242F;
+--uploaded-box-hover-content:#1F242F;
+--uploaded-doc-uploaded-file-name:#F5F5F6;
+--trash-round-hover:#1F242F;
+--contarct-file-head:#F5F5F6;
+--contract-file-upload-bg:#161B26;
+--contarct-file-upload-button-font:#CECFD2;
+--contarct-file-upload-button-border:#1018280D;
+--contact-file-upload-button-hover-bg:#1F242F;
+--count-result-head:#94969C;
+--count-resul-result:#F5F5F6;
+--total-contarct-border:#1F242F;
+--contarct-table-border:#1F242F;
+--contract-table-bg-color:#252a33;
+--contract-list-table-color:#94969C;
+/* --initial-chat-name:#F5F5F6;
+--initial-chat-chat-user:#F5F5F6;
+--initial-chat-chat-help:#94969C;
+--initial-main-chat-box:#0C111D;
+--initial-chat-search-input:#0C111D;
+--initial-chat-search-border:#333741;
+--initial-chat-search-input-text:#85888E;
+--initial-chat-bot-color:#CECFD2;
+--initial-chat-bot-loader-border:#1F242F;
+--initial-chat-bot-back:#0C111D;
+--initial-chat-bot-ball:#94969C;
+--initial-srm-logo:#EEEEEE; */
+--initial-chat-name:#F5F5F6;
+--initial-chat-chat-user:#F5F5F6;
+--initial-chat-chat-help:#94969C;
+--initial-main-chat-box:#0C111D;
+--initial-chat-search-input:#0C111D;
+--initial-chat-search-input-text:#F5F5F6;
+--initial-chat-search-border:#333741;
+--initial-chat-bot-color:#CECFD2;
+--initial-chat-bot-loader-border:#1F242F;
+--initial-chat-bot-back:#0C111D;
+--initial-chat-bot-ball:#94969C;
+--initial-srm-logo:#EEEEEE;
+--initial-small-box:#161B26;
+--initial-small-box-border:#1F242F;
+--initial-small-box-content:#F5F5F6;
+--initial-bot-chat-msg:#F5F5F6;
+--initial-ex-link-hover:#1f242f;
+--initial-pdf-head:#F5F5F6;
+--initial-pdf-border-bottom:#333741;
+--initial-pdf-bg:#161B26;
+--initial-pdf-contract:#94969C;
+--initial-pdf-nav:#161B26;
+--initial-tab1-active:#1F242F;
+--initial-tab1-hover:#1F242F;
+--initial-divider-line:#94969C33;
+--initial-tab1-active-font:#CECFD2;
+--prev-acc-box-btn-back:#161B26;
+--prev-accor-btn:#F5F5F6;
+--Table-contract-list-contract-result-list-hover:#1f242f;
+--contract-result-list-status-box-review:#053321;
+--contract-result-list-status-box-review-border:#085D3A;
+--contract-result-list-status-box-review-txt-color:#75E0A7;
+--contract-result-list-status-box-analyse:#102A56;
+--contract-result-list-status-box-analyse-border:#1849A9;
+--contract-result-list-status-box-analyse-txt-color:#84caff;
+--doc-nav-head-back:#F5F5F6;
+--doc-nav-bg-color:#0C111D;
+--doc-nav-border-color:#1F242F;
+--doc-nav-next-page-count:#F5F5F6;
+--dash-total-bg-color:#161B26;
+--dash-total-text-color:#94969C;
+--dash-file-img-bg:#722ED1;
+--dash-file-count-color:#F5F5F6;
+--contract-list-bg-color:#1f242f;
+--toogle-button-bg-color:#0C111D;
+--toogle-button-border-color:#2c2f36;
+--toogle-button-toogle-border-right:#333741;
+--toogle-button-on-hover:#1f2937;
+--grid-card-bg:#0C111D;
+--grid-card-border:#333741;
+--grid-hover:#161B26;
+--grid-card-head:#F5F5F6;
+--grid-card-h6:#94969C;
+--grid-ver-no:#94969C;
+--grid-status-bg:#053321;
+--grid-status-txt:#75E0A7;
+--grid-type-color:#94969C;
+--grid-type-txt:#F5F5F6;
+--grid-start:#94969C;
+--grid-date-value:#F5F5F6;
+--product-pricing-heading:#F5F5F6;
+--document-selected-head:#F5F5F6;
+--pricing-table-box-bg-color:#0c111d;
+--contract-search-bar:#0C111D;
+--contract-radio-btn:#94969C;
+--contract-head-btn:#F5F5F6;
+--contract-head-btntwo:#F5F5F6;
+--contract-head-doc:#F5F5F6;
+--contract-head-adjus:#F5F5F6;
+--contract-head-source:#F5F5F6;
+--contract-bottom-filter:#0C111D;
+--contract-bottom-filter-border:#1F242F;
+--contract-clear-btn:#CECFD2;
+--contract-btn-back:#161B26;
+--contract-btn-border:#333741;
+--contract-btn-filter:#CECFD2;
+--contract-btn-filter-back:#722ED1;
+--contract-details-bg:#0C111D;
+--contract-details-font:#94969C;
+--contract-details-font-below:#94969C;
+--contract-checkbox-bg:#0C111D;
+--contract-checkbox-border:#333741;
+--contract-event-topbar:#161B26;
+--contract-event-topbar-sub:#0C111D;
+--contract-event-topsub-text:#CECFD2;
+--contract-detail-box-bg:#0C111D;
+--contract-detail-box-head:#F5F5F6;
+--contract-detail-box-bottom:#1F242F;
+--contract-tot-box:#0C111D;
+--contract-accordian-box:#161B26;
+--webkit-scrollbar-track:#333741;
+--webkit-scrollbar-thumb:#94969C;
+--select-option-bg-color:#0C111D;
+--select-option-boder-focused:#1F242F;
+--select-option-border-onhover:#B37FEB;
+--document-type-font-color:#F5F5F6;
+--document-type-hover:#333741;
+--bg-color-select-still:#0C111D;
+--select-document-type-border:#1F242F;
+--preview-acc-accordion-button-collapsed:#161B26;
+--preview-acc-accordion-button-collapsed-font:#F5F5F6;
+--preview-acc-accordion-button-not-collapsed:#262A33;
+--tiered-list-bg:#262A33;
+--tiered-list-border:#1F242F;
+--tiered-list-list-bg:#0C111D;
+--tiered-list-border-top-bottom:#1F242F;
+--acc-list-data-bg:#262A33;
+--contract-accordian-clicked-text:#F5F5F6;
+--contract-accordian-clicked-bg:#161B26;
+--contract-btn-content-bg:#161B26;
+--contract-btn-content-bg-text:#F5F5F6;
+--contract-tier-table-bg:#161B26;
+--contract-tier-table-data:#F5F5F6;
+--contract-tier-table-border:#1F242F;
+--contract-tier-table-data-border:#1F242F80;
+--contract-tier-table-td-bg:#0C111D;
+--contract-tier-table-td:#94969C;
+--contract-tier-table-left-data:#F5F5F6;
+--contract-details-tot-border:#1F242F80;
+--contract-acc-list-data:#1F242F80;
+--pricing-table-border:#1F242F;
+--pricing-table-bg:#0C111D;
+--pricing-table-th-bg:#262A33;
+--pricing-table-th-bgthree:#161B26;
+--pricing-table-borderthree:#1F242F;
+--pricing-table-two-text:#F5F5F6;
+--pricing-table-two-text-bg:#161B26;
+--pricing-table-ndc:#F5F5F6;
+--pricing-table-savi-text:#94969C;
+--pricinf-table-dollarfont:#75E0A7;
+--pricing-table-border-bottom:#1F242F;
+--pricing-table-total-border:rgb(31, 36, 47,0.8);
+--pricing-table-border-total-price:rgb(31, 36, 47,0.8);
+--pricing-evehealth-scrollbar:#333741;
+--skeleton-base-color: #1F242F;
+--accordion-header-border-color:#262A33;
+--entities-bg:#161B26;
+--tier-level-head:#CECFD2;
+--tiered-acc-head-bg:#262A33;
+--tiered-acc-body-bg:#262A33;
+--preview-acc-body-border-top:#333741;
+ --tier-summary-level-bg:#161B26;
+--preview-li-span-text-color:#94969C;
+--border-color-status-icon:#085D3A;
+--contract-accordion-head-bg:#161B26;
+--chat-active-entities-border:#2c2c2c;
+--react-select-border-color:#333741;
+--contract-radio-btn-border:#333741;
+--changes-head-bg:#161B26;
+--changes-head-border:#333741;
+ --changes-items-bg:#1F242F;
+--changes-item-border:#1F242F;
+--replaced-badge-bg:#102A56;
+--replaced-badge-border:#1849A9;
+--replaced-badge-text-color:#84CAFF;
+--removed-badge-bg:#7f1d1d;
+--removed-badge-txt-color:#fca5a5;
+--removed-badge-border:#912018;
+--added-badge-bg:#064e3b;
+--added-badge-txt-color:#86efac;
+--added-badge-border:#085D3A;
+--modal-bg-explain:#000000;
+--modal-title-text-color:#ffffff;
+--contract-comment-title:#FFFFFF;
+--contract-comment-title-border:#333741;
+ --contract-comment-title: #161B26;
+ --contract-comment-title-head:#F5F5F6;
+ --contract-comment-body:#1F242F;
+ --contract-body-title-name-of-cust:#F5F5F6;
+ --contract-comment-yesterday:#94969C;
+  --contract-comment-cust:#F5F5F6;
+    --contract-comment-cust-para:#F5F5F6;
+   --contract-comment-cust-para-border:#1F242F;
+   --border-ppt-color:#1F242F;
+--table-bg-initial-original:#0c111d;
+--contract-details-table:#0C111D;
+--contract-hover-edit:#161B26;
+ --edit-tier-level-title:#101828;
+ --tier-level-bodycontents:#CECFD2;
+  --restatement-title:#F5F5F6;
+  --restatement-border-bottom:#1F242F;
+  --restatement-base-title:#F5F5F6;
+    --restatement-background-table:#0C111D;
+    --restatement-background-title-table:#161B26;
+     --restatement-pdf-title:#F5F5F6;
+       --restatement-datas:#F5F5F6;
+       --restatement-border:#1F242F;
+       --restatement-hover:#1F242F;
+        --restatement-input-bg:#0C111D;
+        --restatement-input-border: #333741;
+        --audit-title:#F5F5F6;
+          --audit-filters-data:#94969C;
+          --audit-border:#1F242F;
+           --audit-btngroup:#0C111D;
+           --audit-btn-active:#1F242F;
+           --audit-btn-font:#CECFD2;
+           --audit-normal-font:#CECFD2;
+             --audit-search-input:#0C111D;
+             --audit-seach-color:#85888E;
+             --off-canves-icm-bg: #101828;
+  --sec-list-layout-bg:#161b26;
+  --sec-list-layout-txt-colour:#ECECED;
+  --layou-header-txt-colour:#F5F5F6;
+--change-history-h3-headeer:#F5F5F6;
+--clauses-added-header-color:#F5F5F6;
+--clr-btn-chnge-page-btm-bg-colour:#161B26;
+--clr-btn-chnge-page-btm-txt-colour:#CECFD2;
+--contract-list-table-color:#F5F5F6;
+--modal-text-area:#F5F5F6;
+--comments-modaltext-are:#F5F5F6;
+--comments-sec-title:#CECFD2;
+--contract-list-table-color:#94969C;
+--contracts-table-first-doc:#F5F5F6;
+
+}
+
+:root[data-theme="Light"] .accordion-button::after {
+    filter: none; /* or filter: brightness(0) invert(0); for default/dark arrow */
+}
+
+:root[data-theme="Dark"] .accordion-button::after {
+    filter: brightness(0) invert(1); /* for light arrow on dark background */
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: sans-serif;
+}

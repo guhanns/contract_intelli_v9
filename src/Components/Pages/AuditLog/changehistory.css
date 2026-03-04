@@ -1,0 +1,268 @@
+ .top-content-change-history{
+  border: 1px solid var(--audit-border)!important ;
+  padding: 15px;
+}
+ .top-content-change-history .contract-changes{
+  color:#F5F5F6;
+  padding-left: 15px;
+  font-family:"Inter";
+  font-weight: 500;
+  font-size:20px;
+  padding-top: 5px;
+ }
+  .top-content-change-history .agreement-pdf-title{
+    color: #F5F5F6;
+    font-family:"Inter";
+    font-weight: 300;
+    font-size:16px;
+    padding-left: 20px;
+    padding-top: 5px;
+  }
+  .history-filter-title{
+    color:  var( --audit-title)!important;
+    font-family:"Inter";
+    font-weight: 600;
+    font-size:16px;
+    padding-left: 12px;
+    padding-top: 16px;
+  }
+  .sections-history .sec-history-title{
+       color:  var( --audit-title)!important;
+    font-family:"Inter";
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .sections-history{
+    margin-left: 12px;
+    margin-top: 16px;
+  }
+  .sections-history .all{
+    margin-top: 14px;
+  }
+   .sections-history .section-one{
+    margin-top: 14px;
+   }
+     .sections-history .section-two{
+    margin-top: 14px;
+   }
+     .sections-history .section-three{
+    margin-top: 14px;
+   }
+
+   .all .title{
+     color: var(--audit-filters-data)!important;
+    font-family:"Inter";
+    font-weight: 400;
+    font-size: 14px;
+    padding-left: 8px;
+   }
+   .section-one .title{
+  color: var(--audit-filters-data)!important;
+    font-family:"Inter";
+    font-weight: 400;
+    font-size: 14px;
+    padding-left: 8px;
+   }
+
+     .section-two .title{
+ color: var(--audit-filters-data)!important;
+    font-family:"Inter";
+    font-weight: 400;
+    font-size: 14px;
+    padding-left: 8px;
+   }
+
+   .section-three .title{
+  color: var(--audit-filters-data)!important;
+    font-family:"Inter";
+    font-weight: 400;
+    font-size: 14px;
+    padding-left: 8px;
+   }
+   .change-history-filter{
+    position: fixed;
+    top: 140px;
+    border: 1px solid var(--audit-border)!important;
+    height: calc(90vh - 60px);
+    overflow-y: scroll;
+   }
+
+   .change-history-container{
+    position: relative;
+    height: calc(90vh - 60px);
+    overflow-y: scroll;
+    background: var(--contract-search-bar);
+    border: 1px solid var(--audit-border);
+   }
+   .export-history-container{
+    position: sticky;
+    top: 0;
+    padding: 12px;
+    background-color: var(--contract-search-bar);
+   }
+  .export-history-container .search-container {
+  position: sticky;
+  top: 0;
+  padding-right: 32px;
+  margin: 0;
+
+}
+.active-user-sec .search-container {
+  margin-top: 20px;
+}
+.search-container img{
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 20px;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+.search-container input {
+  width: 320px;
+  padding: 10px 12px 10px 40px;
+  border: 1px solid var(--audit-border)!important;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  color: var(--audit-seach-color);
+  background-color: var(--audit-search-input)!important;
+}
+.search-container{
+  margin-top: 20px;
+  margin-left: 16px;
+}
+.export-history-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.export-history-container .title{
+color: #94969C;
+font-family:"Inter";
+font-weight: 600;
+font-size:14px;
+padding-left: 6px;
+cursor: pointer;
+}
+.export-history-container{
+  margin-right: 16px;
+  margin-top: 5px;
+}
+.changes-history-content-sec h3{
+ color:var(--change-history-h3-headeer);
+ font-family:"Inter";
+font-weight: 500;
+font-style: Medium;
+font-size: 16px;
+}
+.changes-history-content-sec{
+  margin-top: 20px;
+}
+.changes-history-content-sec .datas{
+  color: var(--change-history-h3-headeer);
+  list-style: none;
+  margin-top: 15px;
+}
+
+.changes-history-content-sec .datas li{
+    padding: 14px 0px;
+}
+.changes-history-content-sec .datas .time{
+color: #94969C;
+font-family:"Inter";
+font-weight: 400;
+font-size:16px;
+padding-right: 20px;
+}
+
+/*filter */
+
+.apply-filter-btn-summary .filter-btn{
+  display: flex;
+  justify-content: center;
+  border-top: 2px solid var(--audit-border)!important;
+  margin-top: 20px;
+}
+.apply-filter-btn-summary .filter-btn{
+  padding: 17px;
+  position: absolute;
+    bottom: 0px;
+    height: 50px;
+    background-color: var(--contract-bottom-filter);
+    border-top: 1px solid var(--contract-bottom-filter-border);
+    z-index: 10000;
+    width: 100%;
+    left: 0;
+}
+.apply-filter-btn-summary .clr-btn{
+  padding: 8px 12px;
+  background-color:var(--clr-btn-chnge-page-btm-bg-colour);
+  color:var(--clr-btn-chnge-page-btm-txt-colour);
+  border: none;
+  border-radius: 8px;
+  border: 1px solid var(--audit-border)!important;
+  margin-right: 20px;
+  font-family:"Inter";
+font-weight: 600;
+font-size:14px;
+}
+.apply-filter-btn-summary .apply-btn{
+  padding: 8px 12px;
+  background-image: linear-gradient(to right, #eb2f96, #722ed1);
+  color:#FFFFFF;
+  border: none;
+  border-radius: 8px;
+  margin-right: 20px;
+  font-family:"Inter";
+ font-weight: 500;
+ font-size:14px;
+
+}
+
+.apply-filter-btn-summary .apply-btn:hover{
+  background-image: linear-gradient(to right, #722ed1);
+}
+.top-content-change-history .v3{
+  color: #CECFD2;
+  font-family:"Inter";
+font-weight: 500;
+font-size:12px;
+padding:  4px 6px;
+border-radius: 16px;
+border: 1px solid var(--audit-border)!important;
+background-color: #161B26;
+margin-left: 10px;
+}
+
+.contract-search-box.grid.history{
+  border:  1px solid var(--border);
+  border-radius: 0px;
+  height: calc(90vh - 60px);
+}
+
+.audit-list{
+  list-style-type: none;
+  padding-left: 10px;
+  margin-bottom: 20px;
+}
+
+.audit-no-list{
+  text-align: center;
+  color: var(--text);
+  margin-top: 170px;
+}
+
+.contract-search-box.grid.history .css-1p3m7a8-multiValue{
+  background-color: var(--contract-bottom-filter);
+  border: 1px solid var(--audit-border)!important;
+}
+
+.contract-search-box.grid.history .css-1p3m7a8-multiValue .css-9jq23d{
+  color: var(--text);
+}
+
+
+
+

@@ -1,0 +1,210 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    right: 0px;
+    z-index: 3000;
+    width: calc(100% - (var(--sidebar-width)));
+    padding: 1.2rem 30px;
+    min-height: 80px;
+    max-height: 80px;
+    background: var(--Topbar-background);
+    border-bottom: 1px solid var(--topbar-border);
+  }
+  
+  .header .header-left .nav-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+     background: linear-gradient(to right, #EB2F96, #722ED1);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+  }
+
+  .header .header-left img{
+    width: 100px;
+    height: 30px;
+    margin-right: 20px;
+  }
+
+  .nav-title .nav-sep{
+    color: rgb(255, 255, 255,0.4)!important;
+    
+  }
+
+  .header .header-left .sidebar-logo{
+    width: 140px;
+    height: 30px;
+  }
+
+
+  .header .header-right img.header-notifi{
+    width: 100%;
+    height: 100%;
+    max-width: 32px;
+    max-height: 32px;
+    cursor: pointer;
+    margin-right: 24px;
+  } 
+  .header .header-right img.profile-img {
+    width: 100%;
+    height: 100%;
+    max-width: 32px;
+    max-height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .header .header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  
+  .header .header-right .header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    border-radius: 50%;
+    background: grey;
+    cursor: pointer;
+  }
+  
+  .header .header-right .header-icon.cart::after {
+    content: attr(55);
+    position: absolute;
+    top: 0px;
+    right: 53px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    max-width: 14px;
+    min-height: 14px;
+    max-height: 14px;
+    line-height: 14px;
+    border-radius: 50%;
+    font-size: 10px;
+    background: blue;
+    color: white;
+  }
+  
+  .header .header-right .header-icon img {
+    max-width: 100%;
+  }
+  
+  .header .header-right .header-profile {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .header .header-right .header-profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: auto;
+    min-width: 170px;
+    max-width: 100%;
+    background: #1f1f1f;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+    border-radius: 6px;
+    padding: 0 15px;
+    margin: 0;
+    overflow: hidden;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: 0.18s ease-in-out all;
+  }
+  
+  .header .header-right .header-profile:hover .header-profile-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  
+  .header .header-right .header-profile-dropdown li {
+    list-style: none;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: 0.12s ease-in-out all;
+    color: #94969C;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .header .header-right .header-profile-dropdown li:hover {
+    /* background: var(--primary); */
+    color: blue;
+  }
+  
+  .header .header-right .header-profile-dropdown li.logout:hover {
+    /* background: rgba(255, 0, 0, 0.65); */
+    color: #ff0000;
+  }
+  
+
+/* From Uiverse.io by alexruix */ 
+/* The switch - the box around the slider */
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  --background: #28096b;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background);
+  transition: .5s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 50%;
+  left: 10%;
+  bottom: 15%;
+  box-shadow: inset 8px -4px 0px 0px #fff000;
+  background: var(--background);
+  transition: .5s;
+}
+
+input:checked + .slider {
+  background-color: #522ba7;
+}
+
+input:checked + .slider:before {
+  transform: translateX(100%);
+  box-shadow: inset 15px -4px 0px 15px #fff000;
+}
+  
+  /***** END OF HEADER *****/

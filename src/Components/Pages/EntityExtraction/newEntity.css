@@ -1,0 +1,236 @@
+.entity-nav{
+    position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 80px;
+  left: 80px;
+  padding: 0px 22px;
+  width: 96%;
+  height: 60px;
+  background-color: var(--doc-nav-bg-color);
+  border-bottom: 1px solid var(--doc-nav-border-color);
+  z-index: 2000;
+}
+
+.entity-sec-nav{
+    position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 140px;
+  left: 80px;
+  padding: 0px 22px;
+  width: 96%;
+  height: 45px;
+  background-color: var(--doc-nav-bg-color);
+  border-bottom: 1px solid var(--doc-nav-border-color);
+  z-index: 2000;
+}
+
+.entity-nav .entity-head{
+    color: var(--text-primary);
+font-size:20px;
+font-style: normal;
+font-weight: 500;
+}
+
+.entity-nav .right-entity{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.entity-sec-nav .sec-ryt-entity{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.entity-save{
+        padding: 8px 16px;
+    height: 40px;
+    background-color: var(--contract-file-upload-bg);
+    color: var(--contarct-file-upload-button-font);
+    border: 1px solid var(--total-contarct-border);
+    border-radius: 8px;
+}
+
+.entity-clear{
+    all: unset;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+}
+
+.entity-main{
+    margin-top: 70px ;
+    padding: 16px;
+}
+
+.entity-main h4{
+    color: var(--text-primary);
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+}
+
+
+.entity-input{
+    width: 100%;
+    background-color: var(--initial-chat-search-input);
+    border: 1px solid var(--initial-chat-search-border);
+    color: var(--initial-chat-search-input-text);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    height: 44px !important;
+}
+
+
+.entity-input:hover {
+  outline: 1px solid #9254de;
+  border: none;
+}
+ 
+.entity-input:focus-visible {
+  outline: 1px solid #9254de;
+  border: none;
+}
+
+.entity-fields h4{
+color: var(--text-primary);
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+}
+
+.entity-box{
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    margin: 16px 0px;
+    padding: 16px;
+}
+
+.box-info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0px;
+    color: var(--text-secondary);
+}
+
+.entity-add{
+    all: unset;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+}
+
+.upload-bg{
+    width: 40px;
+    height: 40px;
+    background-color: #7F56D9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-head{
+    color: var(--text-primary);
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+margin: 0;
+}
+
+.sec-ryt-entity h4{
+color: var(--text-primary);
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+margin: 0;
+}
+
+.validation-main{
+     margin-top: 105px ;
+}
+
+.validation-card-box{
+    height: calc(100vh - 145px);
+    overflow-y: scroll;
+    padding: 16px;
+}
+
+.validation-pdf-box{
+    position: sticky;
+    top: 105px;
+    height: calc(100vh - 145px);
+    overflow-y: scroll;
+}
+
+.validation-card-box .valid-card{
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 12px;
+}
+
+.validation-card-box .valid-card:hover{
+    background-color: var(--bg-secondary);
+    cursor: pointer;
+}
+
+.card-head-opt{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.card-content{
+    margin-top: 14px;
+}
+
+.card-content h5{
+   color: var(--text-secondary);
+}
+
+.card-content p{
+    color: var(--text-teritary);
+}
+
+.entity-sample span{
+    border:1px solid var(--border);
+    padding: 2px 10px;
+    border-radius:6px ;
+    background-color: var(--bg);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+
+}
+
+.card-head-opt .badge-basic {
+    color: var(--Component-colors-Utility-Success-utility-success-700, #75E0A7);
+    text-align: center;
+    padding: 2px 6px;
+    margin-left: 8px;
+    /* Text xs/Medium */
+    font-family: var(--Font-family-font-family-body, Inter);
+    font-size: var(--Font-size-text-xs, 12px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: var(--Line-height-text-xs, 18px);
+    /* 150% */
+    border-radius: var(--radius-sm, 6px);
+    border: 1px solid var(--Component-colors-Utility-Success-utility-success-200, #085D3A);
+    background: var(--Component-colors-Utility-Success-utility-success-50, #053321);
+}

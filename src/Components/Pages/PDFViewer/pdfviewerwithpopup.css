@@ -1,0 +1,58 @@
+ 
+.modal-content{
+    background-color:var(--modal-bg-explain) ;
+    border-radius: 12px;
+}
+ 
+.modal-header{
+        background-color:var(--modal-bg-explain) ;
+ 
+}
+.modal-body{
+            background-color:var(--modal-bg-explain) ;
+    color: var(--modal-title-text-color);
+    padding-top: 0px;
+ 
+}
+ 
+.modal-title{
+    color: var(--modal-title-text-color);
+}
+.modal-mark-with{
+    color: var(--comments-modaltext-are);
+    font-family:"Inter";
+font-weight: 600;
+font-size:18px;
+padding: 15px;
+display:flex;
+justify-content: space-between;
+cursor: pointer;
+
+}
+.modal-comments-modal label{
+    color:var(--comments-sec-title);
+    font-family:"Inter";
+font-weight: 500;
+font-size: 14px;
+
+
+
+}
+ 
+
+.Modal-body-explainthis{
+    padding: 24px;
+}
+
+
+.Modal-head-explainthis{
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 24px;
+    padding-bottom: 0px;
+}
+
+
+.pdfViewer{
+    width: 50%;
+}

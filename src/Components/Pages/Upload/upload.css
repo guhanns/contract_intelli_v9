@@ -1,0 +1,231 @@
+.upload-main-box{
+    margin: 30px auto;
+    width: 100%;
+}
+
+.upload-name{
+    color: var(--upload-heading);
+    margin-bottom: 10px;
+}
+
+.upload-info{
+    font-size: 20px;
+    color:var(--upload-info);
+}
+
+.dottedbox-upload-content{
+  
+    padding-left: 4px;
+}
+
+.upload-list-box{
+    width: 85%;
+    max-height: calc(100vh - 300px);
+    overflow: auto;
+    margin: auto;
+}
+
+.upload-box {
+  border: 1px dashed var(--upload-box-dotted);
+  border-radius: 8px;
+  width: 721px;
+  height: 55px;
+  margin: 32px auto;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: var(--upload-box-bg-color);
+}
+
+.upload-box.contract-files-upload{
+    width: 20%;
+}
+
+.upload-box:hover{
+    background-color:var(--upload-box-hover-background-color);
+}
+
+.upload-box {
+    cursor: pointer;
+}
+
+
+.dottedbox-upload-content{
+    color: var(--dottedbox-upload-content);
+    cursor: pointer;
+}
+
+/* .upload-img{
+    margin:12px;
+} */
+
+.upload-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  text-decoration: none;
+}
+
+
+.uploaded-box {
+  border-radius: 8px;
+  padding: 40px 20px;
+  width: 100%;
+  margin: auto;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: var(--uploaded-box-bg-color);
+}
+.uploaded-doc .uploaded-file-name{
+    color: var(--uploaded-doc-uploaded-file-name);
+    font-weight: 400;
+    font-size: 16px;
+    text-align: left;
+}
+.uploaded-box:hover{
+    background-color:var(--uploaded-box-hover-content);
+}
+
+.upload-btn{
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: white;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+    background-image: linear-gradient(to right,#EB2F96,#722ED1);
+}
+
+.upload-btn:hover {
+  background-image:linear-gradient(to right,#722ED1);
+}
+
+.progress{
+    height: 4px;
+}
+
+.progress-bar{
+    height: 4px;
+    background-image: linear-gradient(to right,#EB2F96,#722ED1)!important;
+}
+
+.file-img{
+    width: 32px;
+    height: 32px;
+}
+
+.trash-img{
+    width: 24px;
+    height: 24px;
+}
+
+.trash-round{
+    width: 34px;
+    height: 34px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.trash-round:hover{
+    background-color: var(--trash-round-hover);
+}
+
+/* Scrollbar width */
+::-webkit-scrollbar {
+  width: 10px;     /* for vertical scrollbar */
+  height: 8px;     /* for horizontal scrollbar */
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background: #161B26;  /* or any color you prefer */
+}
+
+/* Scrollbar thumb (the moving part) */
+::-webkit-scrollbar-thumb {
+  background-color: #1F2635;
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+/* On hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #1F242F;
+}
+
+
+.upload-head-back{
+    color: var(--upload-head-back);
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.upload-head-back  h5{
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 14px;
+    padding-left: 20px;
+}
+
+.upload-head-back img{
+    width: 20px;
+    height: 20px;
+    margin: 8px;
+}
+
+
+.upload-input{
+    background-color: var(--initial-chat-search-input);
+    border: 1px solid var(--initial-chat-search-border);
+    color: var(--initial-chat-search-input-text);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    height: 44px !important;
+}
+
+.cfl-bg{
+width: 40px;
+    height: 40px;
+    background-color: #DC6803;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cfl-btn{
+        all: unset;
+        text-align: center;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: var(--bg-secondary);
+    width: 28%;
+    margin-right: 8px;
+}
+
+.upld-amd{
+    background-image: linear-gradient(to right, #eb2f96, #722ed1);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.1s;
+    width: 60%;
+
+
+}
