@@ -21,7 +21,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from "remark-gfm";
 import { truncate } from "lodash";
 import DatePicker from "react-datepicker";
-import {Calendar, CircleAlert, CircleCheckBig, EllipsisVertical, Pencil, TriangleAlert, X} from  'lucide-react'
+import {Calendar, CircleAlert, CircleCheckBig, EllipsisVertical, Info, Pencil, TriangleAlert, X} from  'lucide-react'
 
 import contractPdf from "./SRM Pharma Contract.pdf";
 import pricingPdf from "./Product_Pricing_Table.pdf";
@@ -351,8 +351,10 @@ function Preview() {
   const dispatch = useDispatch()
   const chatEndRef = useRef(null);
   const [template,setTemplate] = useState('')
+  const [locLatest,setLocLatest] = useState({})
   const [loadingExplain, setLoadingExplain] = useState(false);
   const [showCommentBox, setShowCommentBox] = useState(false);
+  const [isInfo,setIsInfo] = useState(false)
   const [isEntityEdit,setIsEntityEdit] = useState(false)
   const [entityValue,setEntityValue] = useState(null)
   const [entityCommnet,setEntityComment] = useState("")
@@ -563,12 +565,28 @@ function Preview() {
 
  
 const handleExport = (type) => {
+  toast.loading('Downloading...')
   requestL({
     url: `/contracts/${location?.state?.contract_id}/${location?.state?.version_number}/export/${type}`,
     method: "GET",
+    responseType: "blob",
   })
     .then((res) => {
-      console.log(res);
+      const blob = new Blob([res], { type: res.type || "application/octet-stream" });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `contract_export.${type}`; // file name
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.dismiss()
+      toast.success("Downloaded Successfully")
     })
     .catch((err) => {
       console.log(err);
@@ -853,7 +871,7 @@ const handleExport = (type) => {
   }, []);
 
   const handleChangeVerison = (value)=>{
-    navigate('/list/preview',{state:{...location?.state,verison_number:value}})
+    navigate('/list/preview',{state:{...location?.state,version_number:value}})
     handleExtractionEntities()
     setVersionOpt([])
     setVersionList([])
@@ -910,7 +928,7 @@ useEffect(() => {
       clearTimeout(pollingRef.current);
     }
   };
-}, [location?.state?.contract_id,template]);
+}, [location?.state,template]);
 
 
 const fetchViewAstJson =()=>{
@@ -924,11 +942,60 @@ const fetchViewAstJson =()=>{
   })
 }
 
+const intervalRef = useRef(null);
+
+const fetchLocAgreement = () => {
+  requestL({
+    url: `/contracts/${location?.state?.contract_id}/loc-agreements`,
+    method: "GET",
+  })
+    .then((res) => {
+      const lastItem = res[res.length - 1];
+      setLocLatest(lastItem);
+
+      if (lastItem?.status === "PROCESSING") {
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      stopPolling();
+    });
+};
+
+const startPolling = () => {
+  if (intervalRef.current) return; // prevent duplicate intervals
+
+  intervalRef.current = setInterval(() => {
+    fetchLocAgreement();
+  }, 5000);
+};
+
+const stopPolling = () => {
+  if (intervalRef.current) {
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+  }
+};
+
+useEffect(() => {
+  if(location?.state?.contract_id){
+    fetchLocAgreement();
+  }
+
+  return () => {
+    stopPolling(); // cleanup when component unmounts
+  };
+}, [location?.state?.contract_id]);
+
 useEffect(()=>{
   if(location?.state?.contract_id){
     fetchViewAstJson()
+    
   }
-},[location?.state?.contract_id])
+},[location?.state])
 
 const saveNodeIndex =(data)=>{
   setCommentIndex({
@@ -1041,6 +1108,9 @@ const fetchContractPricing =()=>{
     console.log(err)
   })
 }
+
+
+
 
 
 
@@ -1694,7 +1764,15 @@ const handleEditTierCell = (rowIndex, key, value) => {
                   <div className="prev-acc-box">
                     <div className="bundle-type-box">
                       <span className="bundle-label">Bundle Type:</span>
-                      <span className="bundle-value">No Bundle Allocated</span>
+                      {locLatest?.classification ? (
+                        <span className="bundle-value active">
+                          {locLatest?.classification} <Info size={18}  onClick={()=>setIsInfo(true)}/>
+                        </span>
+                      ) : (
+                        <span className="bundle-value">
+                          No Bundle Allocation
+                        </span>
+                      )}
                     </div>
                     {!location?.state?.isExtract && (
                       <div className="d-flex align-items-center">
@@ -2051,7 +2129,7 @@ const handleEditTierCell = (rowIndex, key, value) => {
                                           <div className="wac-price text-end">
                                             <span>WAC Price</span>
                                             <h5 className="text-end">
-                                             $  {list?.wac_price}
+                                              $ {list?.wac_price}
                                             </h5>
                                           </div>
                                         </div>
@@ -2071,8 +2149,8 @@ const handleEditTierCell = (rowIndex, key, value) => {
                                               </div>
                                               <div>
                                                 <h6>
-                                                  <span>Final Price:</span>{" "}
-                                                 $  {tierData?.final_price} 
+                                                  <span>Final Price:</span> ${" "}
+                                                  {tierData?.final_price}
                                                 </h6>
                                               </div>
                                             </div>
@@ -2545,6 +2623,55 @@ const handleEditTierCell = (rowIndex, key, value) => {
               <button class="save-btn m-0" onClick={() => UpdateEntity()}>
                 Save Changes
               </button>
+            </div>
+          </ModalBody>
+        </Modal>
+
+        <Modal size="lg" isOpen={isInfo} centered zIndex={4000} className="contingency-modal">
+          <ModalHeader toggle={() => setIsInfo(false)} className="contingency-modal-header">
+            <h5 className="contingency-modal-title">Contingency Discount Structure</h5>
+          </ModalHeader>
+          <ModalBody className="contingency-modal-body">
+            <div className="bundle-badge">
+              {locLatest?.classification}
+            </div>
+            <div className="contingency-table-wrapper">
+              {Array.isArray(locLatest?.extracted_table) && locLatest?.extracted_table.length > 0 && (
+                <table className="contingency-table" >
+                  <thead>
+                    <tr>
+                      <th>Brand</th>
+                      <th>Parent Discount</th>
+                      <th>Effective Discount</th>
+                      <th>Contingency Discount</th>
+                      
+                    </tr>
+                  </thead>
+
+                  <tbody >
+                    {locLatest?.extracted_table.map((row, rowIndex) => {
+                     
+                          return  <tr key={rowIndex}><td>
+                             {row?.brand}
+                          </td>
+                          <td className="number-cell">
+                             {row?.parent_discount}
+                          </td>
+                          <td className="number-cell">
+                             {row?.effective_discount}
+                          </td>
+                          <td className="positive-value">
+                             {row?.contingency_discount}
+                          </td>
+                      </tr>
+})}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            <div className="contingency-rationale">
+              {locLatest?.classification_rationale}
             </div>
           </ModalBody>
         </Modal>

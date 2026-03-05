@@ -33,8 +33,8 @@ const typeOption =[
     value:'PRIMARY'
   },
   {
-    label:'LOC_Aggrement',
-    value:'LOC_Aggrement',
+    label:'LOC_Agreement',
+    value:'LOC_Agreement',
   }
 ]
 function Upload() {
@@ -160,86 +160,113 @@ function Upload() {
 const handleUpload = async () => {
   setIsUpload(true);
 
+  // Reset previous errors
+  setIsConflict(false);
+  setConflictData(null);
+  setIsContractNum(false);
+  setErrData(null);
+
   if (files.length <= 0) {
-    return toast.error("Please upload file");
+    toast.error("Please upload file");
+    return;
   }
 
-  if(fileInfo?.contract_number===""){
-    return toast.error("Contract Number Required")
+  if (!fileInfo?.contract_number) {
+    toast.error("Contract Number Required");
+    return;
   }
 
+  if (!fileInfo?.file_type) {
+    toast.error("File type Required");
+    return;
+  }
 
   try {
-  toast.loading("Uploading...");
+    toast.loading("Uploading...");
 
-  const uploadResults = await Promise.all(
-    files.map(async (li) => {
-      const formData = new FormData();
-      formData.append("file", li.file);
-      formData.append("contract_number", fileInfo?.contract_number);
-      formData.append("file_type", fileInfo?.file_type);
-      formData.append("author", userName);
+    const uploadResults = await Promise.all(
+      files.map(async (li) => {
+        const formData = new FormData();
+        formData.append("file", li.file);
+        formData.append("contract_number", fileInfo?.contract_number);
+        formData.append("file_type", fileInfo?.file_type);
+        formData.append("author", userName);
 
-      let url = `/upload` 
+        let url = `/upload`;
 
-      if(fileInfo?.file_type === 'LOC_Aggrement'){
-          url = `/contracts/loc-agreement`
-      }
+        if (fileInfo?.file_type === "LOC_Agreement") {
+          url = `/contracts/loc-agreement`;
+        }
 
-      const response = await axios.post(`${LexiURL}${url}`, formData);
+        const response = await axios.post(`${LexiURL}${url}`, formData);
 
-      // 🚨 Stop everything if conflict detected
-      if(!response?.data?.found){
-        throw {
-          isContractNum: true,
+        console.log(response);
+
+        // ❌ Contract number not found
+        if (response?.data?.found === false) {
+          throw {
+            type: "CONTRACT_NOT_FOUND",
+            data: response.data,
+          };
+        }
+
+        // ❌ Conflict detected
+        if (response?.data?.conflict) {
+          throw {
+            type: "CONFLICT",
+            data: response.data,
+          };
+        }
+
+        // ✅ Successful upload
+        return {
+          originalFile: li,
           data: response.data,
         };
-      }
-      if (response?.data?.conflict) {
-        throw {
-          isConflict: true,
-          data: response.data,
-        };
-      }
+      })
+    );
 
-      return {
-        originalFile: li,
-        data: response.data,
-      };
-    })
-  );
+    toast.dismiss();
+    toast.success("Upload Completed");
 
-  // If we reach here, no conflicts and no failures
-  toast.dismiss();
-  toast.success("Upload Completed");
+    navigate("/list", {
+      state: {
+        fromUpload: true,
+        files,
+        uploadResults,
+      },
+    });
 
-  navigate("/list", {
-    state: {
-      fromUpload: true,
-      files,
-      uploadResults,
-    },
-  });
+  } catch (err) {
+    toast.dismiss();
+    console.error("Upload failed:", err);
 
-} catch (err) {
-  toast.dismiss();
+    if (err?.type === "CONTRACT_NOT_FOUND") {
+      setIsContractNum(true);
+      setErrData(err.data);
+      return;
+    }
 
-  if(err?.isContractNum){
-    setIsContractNum(true)
-    setErrData(err?.data)
+    if (err?.type === "CONFLICT") {
+      setIsConflict(true);
+      setConflictData(err.data);
+      return;
+    }
+
+    toast.error("Upload failed");
+  } finally {
+    setIsUpload(false);
   }
+};
 
-  // 🔴 Conflict Handling
-  if (err?.isConflict) {
-    setIsConflict(true);
-    setConflictData(err.data);
-    return; // STOP here, do not navigate
-  }
+const handleCloseConflict = () => {
+  setIsConflict(false);
+  setConflictData(null);
+};
 
-  // 🔴 General Failure
-  console.error("Upload failed:", err);
-  // toast.error("Upload failed");
-}
+const handleCloseContractError = () => {
+  setIsContractNum(false);
+  setErrData(null);
 };
 
 const uploadConflicts = () => {
@@ -487,7 +514,7 @@ console.log(isUploadReady())
             <div>Confirmation Required</div>
           </div>
 
-          <X onClick={() => setIsContractNum(false)} />
+          <X onClick={()=>handleCloseContractError()}/>
         </div>
         <ModalBody>
           <div className="modal-comments-modal">
@@ -504,8 +531,8 @@ console.log(isUploadReady())
               
             </div>
             <div className="">
-              <button className="cfl-btn" onClick={()=>setIsContractNum(false)}>Cancel</button>
-               <button className="upld-amd" onClick={()=>setIsContractNum(false)}>Enter Correct Contract Number</button>
+              <button className="cfl-btn" onClick={()=>handleCloseContractError()}>Cancel</button>
+               <button className="upld-amd" onClick={()=>handleCloseContractError()}>Enter Correct Contract Number</button>
             </div>
           </div>
         </ModalBody>

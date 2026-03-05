@@ -101,7 +101,7 @@
 }
 
 .pricing-table-box .details-head .opt-btn span {
-  margin-right: 40px;
+  /* margin-right: 40px; */
   color: var(--text-secondary);
   opacity: 0.8;
   font-size: 14px;
@@ -539,7 +539,7 @@
 .acc-head {
   /* border-bottom: 1px solid #1F242F; */
   padding: 22px 24px;
-  border-bottom: 1px solid #333741;
+  /* border-bottom: 1px solid #333741; */
   margin: 0px;
 }
 
@@ -1130,7 +1130,7 @@ label {
 }
 
 .grid-card-row {
-  padding: 0px 10px;
+  padding: 0px 20px;
 }
 
 .grid-card {
@@ -1423,4 +1423,58 @@ font-style: normal;
 font-weight: 600;
 line-height: var(--Line-height-text-md, 24px); /* 150% */
   
+}
+
+
+ 
+.toggle-button-mt.active {
+  background-color: #1f2937;
+}
+ 
+ 
+ 
+.icn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  /* transition: background-color 0.2s ease; */
+}
+ 
+.icn-container:hover {
+  background-color: #1f242f;
+}
+ 
+.maximin-icn {
+  width: 14px;  
+  height: 14px;
+}
+ 
+ 
+.maxi-img{
+/* margin-left: 20.5px; */
+margin-right: 0px !important;
+ width: 20px;  
+  height: 20px;
+}
+ 
+ 
+.maxi-min-icn-h{
+   cursor: pointer;
+     /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  /* padding: 6px; */
+  border-radius: 6px;
+}
+ 
+.maxi-min-icn-h:hover{
+  background-color: #1f242f;  
+}
+ 
+ 
+.span-adjust{
+  margin-right: 20px;
 }

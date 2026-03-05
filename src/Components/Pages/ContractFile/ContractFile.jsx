@@ -112,17 +112,17 @@ function ContractFile() {
       original_filename: a.original_filename
     }));
 
-    const locAgreements = contract.loc_agreements.map((l) => ({
-      contract_id: contract.contract_id,
-      contract_number: contract.contract_number,
-      version_number: l.version_number,
-      type: "LOC",
-      status: l.status,
-      uploaded_at: l.uploaded_at,
-      original_filename: l.original_filename
-    }));
+    // const locAgreements = contract.loc_agreements.map((l) => ({
+    //   contract_id: contract.contract_id,
+    //   contract_number: contract.contract_number,
+    //   version_number: l.version_number,
+    //   type: "LOC",
+    //   status: l.status,
+    //   uploaded_at: l.uploaded_at,
+    //   original_filename: l.original_filename
+    // }));
 
-    result.push(...amendments, ...locAgreements);
+    result.push(...amendments);
   });
 
   return result.sort(

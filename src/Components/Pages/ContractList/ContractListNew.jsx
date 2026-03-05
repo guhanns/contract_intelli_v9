@@ -824,8 +824,8 @@ function ContractListNew() {
                                     />
                                   </div>
 
-                                  <div>
-                                    <img
+                                  <div className="icn-container">
+                                    <img className="maximin-icn"
                                       src={
                                         priceMaxi
                                           ? theme === "Dark"
@@ -1014,7 +1014,7 @@ function ContractListNew() {
                                         },
                                       )
                                     ) : (
-                                      <div className="No-data-msg">No Data</div>
+                                      <div className="No-data-msg">Select an entity template to view extracted contract details</div>
                                     )}
                                   </Accordion>
                                 </div>
@@ -1088,6 +1088,7 @@ function ContractListNew() {
                                   <h3>Product Pricing Table</h3>
                                   <div className="opt-btn">
                                     <span
+                                    className="span-adjust"
                                       onClick={() => {
                                         if (pricingList?.length > 0) {
                                           handleHideAll();
@@ -1103,7 +1104,8 @@ function ContractListNew() {
                                         ? "Hide All Tier Details"
                                         : "View All Tier Details"}
                                     </span>
-                                    <img
+                                    <span className="maxi-min-icn-h">
+                                        <img
                                       src={
                                         priceMaxi
                                           ? theme === "Dark"
@@ -1114,6 +1116,8 @@ function ContractListNew() {
                                       className="maxi-img"
                                       onClick={() => setPriceMaxi(!priceMaxi)}
                                     />
+                                    </span>
+                                    
                                   </div>
                                 </div>
                                 <div>
