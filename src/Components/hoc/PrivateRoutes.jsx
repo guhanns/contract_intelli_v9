@@ -11,9 +11,9 @@ export default function PrivateRoutes() {
     console.log(meta)
 //   const { auth, authData } = useSelector((state) => state.loginData);
 
-  if (!isAuthenticated && accounts.length<=0) {
-    return <Navigate to="/" state={{ from: location.pathname }} replace />;
-  }
+  // if (!isAuthenticated && accounts.length<=0) {
+  //   return <Navigate to="/" state={{ from: location.pathname }} replace />;
+  // }
 
   // Even though we check permissions for the subadmin in CheckPermission hoc some routes has nested in the permissioned routes which in some conditions the team members are not allowed
   // So in that case this condition will prevent the team members from accessing the page
