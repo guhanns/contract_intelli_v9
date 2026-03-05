@@ -4,6 +4,8 @@ import filterIcon from '../../../images/icons/filters.png'
 import search from '../../../images/icons/search.png'
 import home from '../../../images/sidebar_icons/home-line.svg'
 import fileCheck from '../../../images/sidebar_icons/upload-ico.svg'
+import updarkDark from "../../../images/sidebar_icons/contract-upload-side.svg";
+import sidebarlistsel from "./../../../images/sidebar_icons/Siudebar-2-selcted.svg"
 import fileCheckDark from '../../../images/sidebar_icons/upload-dark.svg'
 import searchFile from '../../../images/sidebar_icons/graph-ico.svg'
 import searchFileDark from '../../../images/sidebar_icons/graph_dark.svg'
@@ -55,15 +57,27 @@ export const SidebarData =[
         link: '/contract',
         bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
       },
+      
       {
         navItem: '',
         id: 'list',
         // show: false,
-        img: fileCheck,
-        imgLight:uploadlight,
-        imgSelected: fileCheckDark,
-        imgLightSelected:uploadlightsel,
+        img: sidebarlistsel,
+        imgLight:updarkDark,
+        imgSelected: updarkDark,
+        imgLightSelected:updarkDark,
         link: '/list',
+        bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
+      },
+      {
+       navItem: '',
+        id: 'entity-extraction',
+        // show: false,
+        img: entityDark,
+        imgLight: entityDark,
+        imgSelected:entityDark ,
+        imgLightSelected: entityDark ,
+        link: '/entity-extraction',
         bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
       },
       {
@@ -77,17 +91,17 @@ export const SidebarData =[
         link: '/chat',
         bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
       },
-      {
-       navItem: '',
-        id: 'audit',
-        // show: false,
-        img:  restatedarksel,
-        imgLight:restatelightns,
-        imgSelected: restatedarkns,
-        imgLightSelected:clockrewindselect,
-        link: '/audit',
-        bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
-      },
+      // {
+      //  navItem: '',
+      //   id: 'audit',
+      //   // show: false,
+      //   img:  restatedarksel,
+      //   imgLight:restatelightns,
+      //   imgSelected: restatedarkns,
+      //   imgLightSelected:clockrewindselect,
+      //   link: '/audit',
+      //   bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
+      // },
       // {
       //  navItem: '',
       //   id: 'restatement',
@@ -99,17 +113,7 @@ export const SidebarData =[
       //   link: '/restatement',
       //   bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
       // },
-      {
-       navItem: '',
-        id: 'entity-extraction',
-        // show: false,
-        img: entityDark,
-        imgLight: entityDark,
-        imgSelected:entityDark ,
-        imgLightSelected: entityDark ,
-        link: '/entity-extraction',
-        bgShade: 'linear-gradient(to right,rgb(0, 137, 249),rgb(0, 55, 255))',
-      }
+      
       
      
 ]

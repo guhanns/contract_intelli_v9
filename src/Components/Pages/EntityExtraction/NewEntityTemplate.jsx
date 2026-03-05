@@ -31,22 +31,17 @@ import request from "../../../api/api";
 import toast from "react-hot-toast";
 import requestL from "../../../api/lexi";
 
-const sqlFormatOptions = [
+export const sqlFormatOptions = [
   { label: "String", value: "string" },
   { label: "Table", value: "table" },
-  { label: "Long Text (TEXT)", value: "text" },
-  { label: "Integer (INT)", value: "int" },
-  { label: "Big Integer (BIGINT)", value: "bigint" },
-  { label: "Decimal (DECIMAL)", value: "decimal" },
-  { label: "Boolean (TRUE/FALSE)", value: "boolean" },
   { label: "Date", value: "date" },
-  { label: "Date & Time", value: "datetime" },
-  { label: "Timestamp", value: "timestamp" },
-  { label: "JSON", value: "json" },
-  { label: "UUID", value: "uuid" },
+  { label: "Percentage", value: "percentage" },
+  { label: "Currency", value: "currency" },
+  { label: "Boolean", value: "boolean" },
+  { label: "Number", value: "number" },
 ];
 
-const ragOptions = [
+export const ragOptions = [
   { label: "Basic", value: "basic" },
   { label: "HyDE", value: "hyde" },
   { label: "Subquestion", value: "subquestion" },
@@ -96,10 +91,7 @@ const validateTemplate = (template) => {
           "RAG type is required";
       }
 
-      if (!entity.few_shots || entity.few_shots.length === 0) {
-        errors[`section_${secIdx + 1}_entity_${entIdx + 1}_few_shot`] =
-          "At least one few-shot example is required";
-      }
+      
     });
   });
 
@@ -351,12 +343,14 @@ function NewEntityTemplate() {
       navigate("/entity-extraction/test", {
         state: {
           template: payload,
+          template_id:template?.template_id ?? null
         },
       });
     });
   };
 
   const handleSaveAndContinue = () => {
+    console.log(template)
     const payload = buildPayload(template);
 
     const validationErrors = validateTemplate(template);
@@ -465,7 +459,7 @@ function NewEntityTemplate() {
             New Entity Template- Define Template
           </div>
           <div className="right-entity">
-            <div>
+            <div className="stepper-width-adjust">
               <img src={stepper1} />
             </div>
             <div className="entity-clear">Clear All</div>
@@ -485,12 +479,12 @@ function NewEntityTemplate() {
               className="entity-save"
               onClick={() => handleSaveAndContinue()}
             >
-              Save & Continue <ChevronRight />
+              Test Template<ChevronRight />
             </div>
           </div>
         </div>
       </div>
-      <div className="entity-main">
+      <div className="entity-main" >
         <h4>Template Information</h4>
         <div className="row my-3">
           <div className="col-4">
@@ -498,6 +492,7 @@ function NewEntityTemplate() {
             <div>
               <input
                 className="entity-input"
+                placeholder="Template Information"
                 value={template?.name}
                 onChange={(e) =>
                   setTemplate({
@@ -513,6 +508,7 @@ function NewEntityTemplate() {
             <div>
               <input
                 className="entity-input"
+                placeholder="Description"
                 value={template?.description}
                 onChange={(e) =>
                   setTemplate({
@@ -557,6 +553,7 @@ function NewEntityTemplate() {
                     <div>
                       <input
                         className="entity-input"
+                        placeholder="Section Name"
                         value={sec?.sectionName}
                         onChange={(e) =>
                           handleSectionChange(
@@ -574,7 +571,7 @@ function NewEntityTemplate() {
                     return (
                       <div className="row">
                         <div className="d-flex justify-content-between align-items-center text-secondary mb-3">
-                          <div>Entity {entIdx + 1}</div>
+                          <div className="Entity-heading-ukg">Entity {entIdx + 1}</div>
                           <div>
                             <span
                               className="mx-2"
@@ -585,10 +582,11 @@ function NewEntityTemplate() {
                           </div>
                         </div>
                         <div className="col-6">
-                          <label>Entity Name </label>
+                          <label>Entity Name*</label>
                           <div>
                             <input
                               className="entity-input"
+                              placeholder="entity_name "
                               value={ent?.field_name}
                               onChange={(e) =>
                                 handleEntityChange(
@@ -606,6 +604,7 @@ function NewEntityTemplate() {
                           <div>
                             <input
                               className="entity-input"
+                              placeholder="Entity Display Name"
                               value={ent?.display_key}
                               onChange={(e) =>
                                 handleEntityChange(
@@ -637,7 +636,7 @@ function NewEntityTemplate() {
                     </div> */}
                         <div
                           className={
-                            ent?.format === "string" ? "col-3" : "col-4"
+                            ent?.format !== "table" ? "col-3" : "col-4"
                           }
                         >
                           <label>Format</label>
@@ -659,15 +658,16 @@ function NewEntityTemplate() {
                             />
                           </div>
                         </div>
-                        {ent?.format === "string" && (
+                        {ent?.format !=='table' && (
                           <div
                             className={
-                              ent?.format === "string" ? "col-6" : "col-4"
+                              ent?.format !== "table" ? "col-6" : "col-4"
                             }
                           >
                             <label>Format Hint</label>
                             <div>
                               <input
+                              placeholder="Format Hint"
                           className="entity-input"
                           value={ent?.format_hint}
                           onChange={(e) =>
@@ -685,7 +685,7 @@ function NewEntityTemplate() {
 
                         <div
                           className={
-                            ent?.format === "string" ? "col-3" : "col-4"
+                            ent?.format !== "table" ? "col-3" : "col-4"
                           }
                         >
                           <label>RAG Technique</label>
@@ -749,6 +749,25 @@ function NewEntityTemplate() {
                             </div>
                           </div>
 
+                          <div className="col-12 mt-3">
+                          <label>Extraction Question</label>
+                          <div>
+                            <input
+                              className="entity-input"
+                              placeholder="Description"
+                              value={ent?.question}
+                              onChange={(e) =>
+                                handleEntityChange(
+                                  secIdx,
+                                  entIdx,
+                                  "question",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
+
                         {/* <div className="col-6">
                       <label>Few-Shot Example</label>
                       <div>
@@ -768,7 +787,7 @@ function NewEntityTemplate() {
                           ent?.columns?.map((col, colIdx) => {
                             return (
                               <div className="row align-items-center">
-                                <div>Table Columns</div>
+                                <div className="Tabl-col-header">Table Name</div>
                                 <div className="col-3">
                                   <label>Column Name</label>
                                   <div>
@@ -787,6 +806,8 @@ function NewEntityTemplate() {
                                     />
                                   </div>
                                 </div>
+
+                                
                                 <div className="col-3">
                                   <label>Format</label>
                                   <Select
@@ -854,11 +875,12 @@ function NewEntityTemplate() {
                           </div>
                         )}
 
-                        <div className="col-12">
-                          <label>Extraction Question</label>
+                        <div className="col-12 mt-3" >
+                          <label>Additional Comments</label>
                           <div>
                             <input
                               className="entity-input"
+                              placeholder="Additional Comments"
                               value={ent?.extra_content}
                               onChange={(e) =>
                                 handleEntityChange(

@@ -546,7 +546,7 @@ function Inspector({ node, numbering }) {
 //                              Also accepts API format ({ contract_id, version_number, nodes })
 //   onNodeSelect  {function} — called with the full node object when a node is selected
 // ─────────────────────────────────────────────────────────────────────────────
-export default function ViewAstInspector({ data: rawData,onNodeSelect,onExplain,onAdd}) {
+export default function ViewAstInspector({ data: rawData,onNodeSelect,onExplain,onAdd,isPopup}) {
   // Accept both file format { schema, nodes } and API format { contract_id, nodes }
   const data = useMemo(() => {
     if (!rawData) return null;
@@ -798,7 +798,7 @@ const [showPopup, setShowPopup] = useState(false);
     <div className="vai-root">
       
       <div className="vai-main">
-       {showPopup && popupPos && selectedNode &&
+       {showPopup && popupPos && selectedNode && isPopup&&
   renderPopup(
     popupPos,
     selectedNode.id,

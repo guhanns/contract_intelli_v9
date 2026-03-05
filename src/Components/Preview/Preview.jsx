@@ -77,6 +77,7 @@ import aiDark from '../../images/icons/aiDark.svg';
 import requestL, { LexiURL } from "../../api/lexi";
 import NewPreview from "./NewPreview";
 import ViewAstInspector from "./ViewAstInspector";
+import { sqlFormatOptions } from "../Pages/EntityExtraction/NewEntityTemplate";
 
 const colourStyles = {
   container: (styles) => ({
@@ -352,6 +353,9 @@ function Preview() {
   const [template,setTemplate] = useState('')
   const [loadingExplain, setLoadingExplain] = useState(false);
   const [showCommentBox, setShowCommentBox] = useState(false);
+  const [isEntityEdit,setIsEntityEdit] = useState(false)
+  const [entityValue,setEntityValue] = useState(null)
+  const [entityCommnet,setEntityComment] = useState("")
   const [extractionEntites,setExtractionEntites] = useState({})
   const [templateOption,setTemplateOption] = useState([])
     const [comment, setComment] = useState("");
@@ -558,73 +562,18 @@ function Preview() {
 
 
  
-  const handleExport = () => {
-    const sheetData = [];
-
-    // Helper to push object or array section into sheetData
-    const pushSection = (title, data) => {
-      if (!data || (Array.isArray(data) && data.length === 0)) return;
-
-      sheetData.push([`${title.toUpperCase()}`]);
-
-      if (Array.isArray(data)) {
-        const headers = Object.keys(data[0] || {});
-        sheetData.push(headers);
-        data.forEach((item) => {
-          sheetData.push(headers.map((key) => item[key]));
-        });
-      } else if (typeof data === "object") {
-        const entries = Object.entries(data);
-        // sheetData.push(["Key", "Value"]);
-        entries.forEach(([key, value]) => {
-          sheetData.push([
-            key,
-            typeof value === "object" ? JSON.stringify(value) : value,
-          ]);
-        });
-      }
-
-      sheetData.push([]); // Spacer row
-    };
-
-    // Push each section
-    pushSection("Contracts", contractOffer);
-    pushSection("Tier Structures", tierSummary);
-    // pushSection("Products", tierDataProduct);
-
-    // Convert to worksheet
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-
-    // Create and append workbook
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Combined Data");
-
-    // Write and download
-    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([wbout], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-
-    const filename = url?.file_name?.split(".")[0] || "exported_data";
-    saveAs(blob, `${filename}.xlsx`);
-    request({
-      url: "/icontract/audit/log",
-      method: "POST",
-      data: {
-        contract_id: contractOffer?.id,
-        user_name: accounts[0]?.name,
-        user_id: accounts[0]?.localAccountId,
-        action_type: "EXPORT",
-        context:`EXCEL Document Dowloaded for Contarct ${contractOffer?.contract_number}- v${contractOffer?.document_version_number} - ${contractOffer?.document_path}`
-      },
+const handleExport = (type) => {
+  requestL({
+    url: `/contracts/${location?.state?.contract_id}/${location?.state?.version_number}/export/${type}`,
+    method: "GET",
+  })
+    .then((res) => {
+      console.log(res);
     })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
   const prevContract =()=>{
     
@@ -854,30 +803,25 @@ function Preview() {
   }
 
    const handleEditTierData =()=>{
-    const {comment}=editTierData
-    console.log(editTierData)
-    toast.loading('Updating..')
-    request({
-      url:'/icontract/backend/contracts/update-and-comment',
-      method:'POST',
-      data:{
-        id:contractOffer?.id,
-        commented_by:accounts[0]?.name,
-        comment:comment,
-        tier_updates:[
-          editTierData
-        ]
-      }
-    }).then((res)=>{
-      toast.remove()
-      toast.success("Tiers Updated Successfully")
-      setIsTierEdit(!isTierEdit)
-      setEditTierData({})
-      fetchContract(contractOffer?.contract_number,contractOffer?.document_version_number)
-    }).catch((err)=>{
-      console.log(err)
-      toast.error("Entities not Updated")
-    })
+    requestL({
+    url:`/entities/${tierList?.entity_id}`,
+    method:'PATCH',
+    data:{
+      value:editTierData,
+      comment:entityCommnet
+    }
+  }).then((res)=>{
+    toast.success("Updated Successfully")
+    console.log(res)
+    setIsTierEdit(false)
+    setEditTierData({})
+    setEntityComment("")
+    setEntityValue(null)
+    handleExtractionEntities()
+
+  }).catch((err)=>{
+    console.log(err)
+  })
   }
 
   const handleMouseDown = (e) => {
@@ -1032,7 +976,6 @@ const handleExplain = async (nodeId, index) => {
    const handleCloseExtraction = () => {
     setIsExplain(false);
     setExtraction({});
-    setIsLoading(true);
   };
 
   const onCancelComment = () => {
@@ -1091,12 +1034,75 @@ const fetchContractPricing =()=>{
     url:`/contracts/${location?.state?.contract_id}/${location?.state?.version_number}/pricing`,
     method:'GET',
   }).then((res)=>{
+    setIsLoading(false)
     setTierList(res?.tiers_source)
     setPricingList(res?.pricing)
   }).catch((err)=>{
     console.log(err)
   })
 }
+
+
+
+
+useEffect(()=>{
+  if(location?.state?.contract_id){
+    fetchContractPricing()
+  }
+},[location?.state?.contract_id])
+
+const UpdateEntity =()=>{
+  requestL({
+    url:`/entities/${entityValue?.entity_id}`,
+    method:'PATCH',
+    data:{
+      value:entityValue?.value,
+      comment:entityCommnet
+    }
+  }).then((res)=>{
+    console.log(res)
+    setIsEntityEdit(false)
+    setEntityComment("")
+    setEntityValue(null)
+    handleExtractionEntities()
+
+  }).catch((err)=>{
+    console.log(err)
+  })
+}
+
+
+const handleEditCell = (rowIndex, key, value) => {
+  setEntityValue(prev => {
+    const updatedRows = [...prev.value];
+    updatedRows[rowIndex] = {
+      ...updatedRows[rowIndex],
+      [key]: value
+    };
+
+    return {
+      ...prev,
+      value: updatedRows
+    };
+  });
+};
+
+
+const handleEditTierCell = (rowIndex, key, value) => {
+  setEditTierData(prev => {
+    const updatedRows = [...prev];
+
+    updatedRows[rowIndex] = {
+      ...updatedRows[rowIndex],
+      [key]: value === "" ? null : value
+    };
+
+    return [
+      ...updatedRows
+    ];
+  });
+};
+
   return (
     <Layouts>
       <style>{`
@@ -1295,7 +1301,7 @@ const fetchContractPricing =()=>{
         </div>
         <Row>
           {/* Left Side: File Preview */}
-          <Col sm='12' md='12' lg="8" className="left-nav">
+          <Col sm="12" md="12" lg="8" className="left-nav">
             <div className={`pdf-view-url ${isSection ? "pdf-resize" : ""}`}>
               {/* <div
                 className="layout-section"
@@ -1323,82 +1329,86 @@ const fetchContractPricing =()=>{
               /> */}
 
               <ViewAstInspector
-              data={viewAstJson}
-              onNodeSelect={saveNodeIndex}
-              onExplain={handleExplain}
-              onAdd={handleAddNote}
-              isExplainLoad={loadingExplain}
+                data={viewAstJson}
+                onNodeSelect={saveNodeIndex}
+                onExplain={handleExplain}
+                onAdd={handleAddNote}
+                isExplainLoad={loadingExplain}
+                isPopup={true}
               />
 
               <Modal
-                      isOpen={isExplain}
-                      toggle={handleCloseExtraction}
-                      centered
-                      zIndex={4000}
-                      size="md"
-                      style={{
-                        padding: "24px",
-                      }}
-                    >
-                      <ModalHeader
-                        toggle={handleCloseExtraction}
-                        className="Modal-head-explainthis"
-                      >
-                        <img
-                          src={aiSummary}
-                          style={{ width: "40px", height: "40px", marginRight: "8px" }}
-                        />
-                        {`AI Summary`}
-                      </ModalHeader>
-                      <ModalBody className="Modal-body-explainthis">
-                        {loadingExplain ? "Loading..." : extraction?.explanation}
-                      </ModalBody>
-                    </Modal>
-                    <Modal
-                      isOpen={showCommentBox}
-                      centered
-                      size="md"
-                      zIndex={4000}
-                      style={{
-                        padding: "34px",
-                      }}
-                    >
-                      <div className="modal-mark-with" >
-                        Mark With Comments
-                        <img src={close} onClick={onCancelComment}/>
-                      </div>
-                      <ModalBody>
-                        <div className="modal-comments-modal">
-                          <label>Comments</label>
-                        </div>
-                        <textarea
-                         
-                          rows={7}
-                          value={comment}
-                          placeholder="Type your comment..."
-                          onChange={(e) => setComment(e.target.value)}
-                          style={{
-                            width: "100%",
-                            background: "var(--white-bg)",
-                            color: "var(--modal-text-area)",
-                            fontSize: "13px",
-                            padding: "8px",
-                            border: "1px solid #374151",
-                            borderRadius: "8px",
-                            resize: "none",
-                            outline: "none",
-                          }}
-                        />
-                        <div class="modal-actions px-0 py-3">
-                          <button class="cancel-btn m-0" onClick={onCancelComment}>
-                            Cancel
-                          </button>
-                          <button class="save-btn m-0" onClick={()=>saveComment()} >
-                            Save Comments
-                          </button>
-                        </div>
-                      </ModalBody>
-                    </Modal>
+                isOpen={isExplain}
+                toggle={handleCloseExtraction}
+                centered
+                zIndex={4000}
+                size="md"
+                style={{
+                  padding: "24px",
+                }}
+              >
+                <ModalHeader
+                  toggle={handleCloseExtraction}
+                  className="Modal-head-explainthis"
+                >
+                  <img
+                    src={aiSummary}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      marginRight: "8px",
+                    }}
+                  />
+                  {`AI Summary`}
+                </ModalHeader>
+                <ModalBody className="Modal-body-explainthis">
+                  {loadingExplain ? "Loading..." : extraction?.explanation}
+                </ModalBody>
+              </Modal>
+              <Modal
+                isOpen={showCommentBox}
+                centered
+                size="md"
+                zIndex={4000}
+                style={{
+                  padding: "34px",
+                }}
+              >
+                <div className="modal-mark-with">
+                  Mark With Comments
+                  <img src={close} onClick={onCancelComment} />
+                </div>
+                <ModalBody>
+                  <div className="modal-comments-modal">
+                    <label>Comments</label>
+                  </div>
+                  <textarea
+                    rows={7}
+                    value={comment}
+                    placeholder="Type your comment..."
+                    onChange={(e) => setComment(e.target.value)}
+                    style={{
+                      width: "100%",
+                      background: "var(--white-bg)",
+                      color: "var(--modal-text-area)",
+                      fontSize: "13px",
+                      padding: "8px",
+                      border: "1px solid #374151",
+                      borderRadius: "8px",
+                      resize: "none",
+                      outline: "none",
+                    }}
+                  />
+                  <div class="modal-actions px-0 py-3">
+                    <button class="cancel-btn m-0" onClick={onCancelComment}>
+                      Cancel
+                    </button>
+                    <button class="save-btn m-0" onClick={() => saveComment()}>
+                      Save Comments
+                    </button>
+                  </div>
+                </ModalBody>
+              </Modal>
               <div
                 ref={containerRef}
                 className={`section-list-layout ${isSection ? "" : "hide"}`}
@@ -1408,38 +1418,34 @@ const fetchContractPricing =()=>{
               >
                 <div>
                   <div className="layout-header">
-                    <div className="head"><img src={theme === 'Dark'?aiDark:ailight}/>Sections</div>
+                    <div className="head">
+                      <img src={theme === "Dark" ? aiDark : ailight} />
+                      Sections
+                    </div>
                     {/* <div className="off-btn" onClick={() => toggleSection()}>
                     <img src={layoutLeft} />
                     </div> */}
                   </div>
                   <Sections filename={url?.file_name} />
-                  
                 </div>
                 <div
-                    className="resize-handle"
-                    onMouseDown={handleMouseDown}
-                    style={{
-                      position: "absolute",
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: "5px",
-                      cursor: "col-resize",
-                    }}
-                  />
+                  className="resize-handle"
+                  onMouseDown={handleMouseDown}
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: "5px",
+                    cursor: "col-resize",
+                  }}
+                />
               </div>
             </div>
-            
           </Col>
 
           {/* Right Side: Contract Entities */}
-          <Col
-            sm='12'
-            md='12'
-            lg="4"
-            className="right-tab"
-          >
+          <Col sm="12" md="12" lg="4" className="right-tab">
             <>
               {isChat ? (
                 <>
@@ -1618,7 +1624,7 @@ const fetchContractPricing =()=>{
                                 {historyList?.upload_timestamp && (
                                   <>
                                     {isToday(
-                                      new Date(historyList?.upload_timestamp)
+                                      new Date(historyList?.upload_timestamp),
                                     )
                                       ? "Today"
                                       : ""}
@@ -1628,7 +1634,7 @@ const fetchContractPricing =()=>{
                                 {historyList?.upload_timestamp &&
                                   format(
                                     new Date(historyList?.upload_timestamp),
-                                    "dd-MMM-yyyy"
+                                    "dd-MMM-yyyy",
                                   )}
                               </div>
                               {historyList?.change_history?.length > 0 && (
@@ -1641,9 +1647,9 @@ const fetchContractPricing =()=>{
                                           {historyList?.upload_timestamp &&
                                             format(
                                               new Date(
-                                                historyList?.upload_timestamp
+                                                historyList?.upload_timestamp,
                                               ),
-                                              "hh:mm a"
+                                              "hh:mm a",
                                             )}{" "}
                                           | Edited by {historyList?.modified_by}
                                         </div>
@@ -1671,7 +1677,7 @@ const fetchContractPricing =()=>{
                                   <ReactMarkdown>
                                     {summaryList?.llm_generated_histories?.replace(
                                       /•/g,
-                                      "-"
+                                      "-",
                                     )}
                                   </ReactMarkdown>
                                 </div>
@@ -1686,22 +1692,27 @@ const fetchContractPricing =()=>{
               ) : isViewEntities ? (
                 <>
                   <div className="prev-acc-box">
-                    {
-                      !location?.state?.isExtract && <div className="d-flex align-items-center">
-                      <h5 className="acc-head">Select Entity Template</h5>
-                    <div>
-                                    <Select
-                                      styles={colourStyles}
-                                      options={templateOption}
-                                      placeholder="Select Template"
-                                      value={templateOption?.filter((li)=>li.value===template)}
-                                      onChange={(e) =>setTemplate(e.value)}
-                                    />
+                    <div className="bundle-type-box">
+                      <span className="bundle-label">Bundle Type:</span>
+                      <span className="bundle-value">No Bundle Allocated</span>
                     </div>
-                    </div>
-                    }
-                    
-                    
+                    {!location?.state?.isExtract && (
+                      <div className="d-flex align-items-center">
+                        <h5 className="acc-head">Select Entity Template</h5>
+                        <div>
+                          <Select
+                            styles={colourStyles}
+                            options={templateOption}
+                            placeholder="Select Template"
+                            value={templateOption?.filter(
+                              (li) => li.value === template,
+                            )}
+                            onChange={(e) => setTemplate(e.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     {isLoading ? (
                       <>
                         <div className="container my-5 p-0 loading-contract">
@@ -1724,111 +1735,205 @@ const fetchContractPricing =()=>{
                           flush
                           className="preview-acc"
                         >
-                          {
-                            extractionEntites?.sections?.length>0 ? extractionEntites?.sections?.map((sec,secIdx)=>{
-                              return <AccordionItem>
-                            <AccordionHeader targetId={secIdx+1}>
-                              {sec?.section}
-                            </AccordionHeader>
-                            <AccordionBody accordionId={secIdx+1}>
-                              <ul className="acc-list-data">
-                                {
-                                  sec?.entities?.length>0 ? sec?.entities?.map((ent,entId)=>{
-                                    return (
-                                      <li
-                                        key={entId}
-                                        className="px-2 contract-offer"
-                                      >
-                                        {ent?.format === "string" && (
-                                          <div className="me-2">
-                                            <span className="text-capitalize">
-                                              {ent?.display_key}
-                                            </span>
+                          {extractionEntites?.sections?.length > 0
+                            ? extractionEntites?.sections?.map(
+                                (sec, secIdx) => {
+                                  return (
+                                    <AccordionItem>
+                                      <AccordionHeader targetId={secIdx + 1}>
+                                        {sec?.section}
+                                      </AccordionHeader>
+                                      <AccordionBody accordionId={secIdx + 1}>
+                                        <ul className="acc-list-data">
+                                          {sec?.entities?.length > 0
+                                            ? sec?.entities?.map(
+                                                (ent, entId) => {
+                                                  return (
+                                                    <li
+                                                      key={entId}
+                                                      className="px-2 contract-offer"
+                                                    >
+                                                      {ent?.format ===
+                                                        "string" && (
+                                                        <div className="me-2">
+                                                          <span className="text-capitalize">
+                                                            {ent?.display_key} :
+                                                          </span>
 
-                                            <span className="ms-2">
-                                              {ent?.effective_value}
-                                            </span>
-                                          </div>
-                                        )}
+                                                          <span className="ms-2">
+                                                            {
+                                                              ent?.effective_value
+                                                            }
+                                                          </span>
+                                                        </div>
+                                                      )}
 
-                                        {ent?.format === "table" && (
-                                          <div >
-                                            <div >
-                                              {ent?.display_key}
-                                            </div>
-                                            <div >
-                                              <table >
-                                                <thead>
-                                                  <tr >
-                                                    {ent?.columns?.length > 0 &&
-                                                      ent?.columns?.map((li, colIdx) => {
-                                                        return (
-                                                          <th key={colIdx} >
-                                                            {li?.display_key}
-                                                          </th>
-                                                        );
-                                                      })}
-                                                  </tr>
-                                                </thead>
-                                                <tbody>
-                                                  {ent?.effective_value
-                                                    ?.length > 0 &&
-                                                    ent.effective_value.map(
-                                                      (li, index) => (
-                                                        <tr key={index} style={{
-                                                          borderBottom: index < ent.effective_value.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                                                          backgroundColor: index % 2 === 0 ? "transparent" : "rgba(0,0,0,0.02)"
-                                                        }}>
-                                                          {Object.entries(li).map(
-                                                            ([key, value], cellIdx) => (
-                                                              <td key={key} >
-                                                                {value}
-                                                              </td>
-                                                            ),
-                                                          )}
-                                                        </tr>
-                                                      ),
-                                                    )}
-                                                </tbody>
-                                              </table>
-                                            </div>
-                                          </div>
-                                        )}
+                                                      {ent?.format ===
+                                                        "table" && (
+                                                        <div>
+                                                          <div>
+                                                            {ent?.display_key}
+                                                          </div>
+                                                          <div>
+                                                            <table className="bundle-table-edx">
+                                                              <thead>
+                                                                <tr>
+                                                                  {ent?.columns
+                                                                    ?.length >
+                                                                    0 &&
+                                                                    ent?.columns?.map(
+                                                                      (
+                                                                        li,
+                                                                        colIdx,
+                                                                      ) => {
+                                                                        return (
+                                                                          <th
+                                                                            className="ai-ns-table"
+                                                                            key={
+                                                                              colIdx
+                                                                            }
+                                                                          >
+                                                                            {
+                                                                              li?.display_key
+                                                                            }
+                                                                          </th>
+                                                                        );
+                                                                      },
+                                                                    )}
+                                                                </tr>
+                                                              </thead>
+                                                              <tbody>
+                                                                {ent
+                                                                  ?.effective_value
+                                                                  ?.length >
+                                                                  0 &&
+                                                                  ent.effective_value.map(
+                                                                    (
+                                                                      li,
+                                                                      index,
+                                                                    ) => (
+                                                                      <tr
+                                                                        key={
+                                                                          index
+                                                                        }
+                                                                        style={{
+                                                                          borderBottom:
+                                                                            index <
+                                                                            ent
+                                                                              .effective_value
+                                                                              .length -
+                                                                              1
+                                                                              ? "1px solid rgba(255,255,255,0.05)"
+                                                                              : "none",
+                                                                          backgroundColor:
+                                                                            index %
+                                                                              2 ===
+                                                                            0
+                                                                              ? "transparent"
+                                                                              : "rgba(0,0,0,0.02)",
+                                                                        }}
+                                                                      >
+                                                                        {Object.entries(
+                                                                          li,
+                                                                        ).map(
+                                                                          (
+                                                                            [
+                                                                              key,
+                                                                              value,
+                                                                            ],
+                                                                            cellIdx,
+                                                                          ) => (
+                                                                            <td
+                                                                              key={
+                                                                                key
+                                                                              }
+                                                                            >
+                                                                              {
+                                                                                value
+                                                                              }
+                                                                            </td>
+                                                                          ),
+                                                                        )}
+                                                                      </tr>
+                                                                    ),
+                                                                  )}
+                                                              </tbody>
+                                                            </table>
+                                                          </div>
+                                                        </div>
+                                                      )}
 
-                                        {
-                                          ent?.format==='date' && <div className="me-2">
-                                            <span className="text-capitalize">
-                                              {ent?.display_key} :
-                                            </span>
+                                                      {ent?.format ===
+                                                        "date" && (
+                                                        <div className="me-2">
+                                                          <span className="text-capitalize">
+                                                            {ent?.display_key} :
+                                                          </span>
 
-                                            <span className="ms-2">
-                                              {ent?.effective_value ? format(new Date(ent?.effective_value),'dd MM yyyy') : ''}
-                                            </span>
-                                          </div>
-                                        }
+                                                          <span className="ms-2">
+                                                            {ent?.effective_value
+                                                              ? ent?.effective_value
+                                                              : "-"}
+                                                          </span>
+                                                        </div>
+                                                      )}
 
-                                        <div className=" edit">
-                                          <Pencil size={18} />
-                                        </div>
-                                      </li>
-                                    );
-                                  }) :""
-                                }
-                               
-                                      </ul>
-                            </AccordionBody>
-                          </AccordionItem>
-                            }) :""
-                          }
+                                                      <div className=" edit">
+                                                        <Pencil
+                                                          size={18}
+                                                          onClick={() => {
+                                                            setEntityValue({
+                                                              value:
+                                                                ent?.format ===
+                                                                "string"
+                                                                  ? ent?.effective_value
+                                                                  : ent?.format ===
+                                                                      "table"
+                                                                    ? ent?.effective_value
+                                                                    : ent?.format ===
+                                                                        "date"
+                                                                      ? ent?.effective_value
+                                                                      : null,
+                                                              entity_id:
+                                                                ent?.entity_id,
+                                                              columns:
+                                                                ent?.columns,
+                                                            });
+                                                            setIsEntityEdit(
+                                                              true,
+                                                            );
+                                                          }}
+                                                        />
+                                                      </div>
+                                                    </li>
+                                                  );
+                                                },
+                                              )
+                                            : ""}
+                                        </ul>
+                                      </AccordionBody>
+                                    </AccordionItem>
+                                  );
+                                },
+                              )
+                            : ""}
                           <AccordionItem>
                             <AccordionHeader
-                              targetId={extractionEntites?.sections?.length >0 ? extractionEntites?.sections?.length+1:3}
+                              targetId={
+                                extractionEntites?.sections?.length > 0
+                                  ? extractionEntites?.sections?.length + 1
+                                  : 3
+                              }
                               className="tiered-head"
                             >
                               Tiered Summary
                             </AccordionHeader>
                             <AccordionBody
-                              accordionId={extractionEntites?.sections?.length >0 ? extractionEntites?.sections?.length+1:3}
+                              accordionId={
+                                extractionEntites?.sections?.length > 0
+                                  ? extractionEntites?.sections?.length + 1
+                                  : 3
+                              }
                               className="tiered-body"
                             >
                               <div
@@ -1838,9 +1943,7 @@ const fetchContractPricing =()=>{
                                   padding: "16px",
                                 }}
                               >
-                                Number of Tiers :{" "}
-                                {tierList?.value?.length}
-                                
+                                Number of Tiers : {tierList?.value?.length}
                               </div>
                               {tierList?.value?.map((list, idx) => {
                                 return (
@@ -1857,7 +1960,9 @@ const fetchContractPricing =()=>{
                                           <Pencil
                                             size={18}
                                             style={{ cursor: "pointer" }}
-                                            onClick={() => editTierLevel(list)}
+                                            onClick={() =>
+                                              editTierLevel(tierList?.value)
+                                            }
                                           />
                                         </div>
                                       </div>
@@ -1868,10 +1973,7 @@ const fetchContractPricing =()=>{
                                           <span className="tier-span">
                                             Purchase Volume Min
                                           </span>
-                                          <h5>
-                                            {list["Min Volume"] ?? "-"}
-                                            
-                                          </h5>
+                                          <h5>{list["Min Volume"] ?? "-"}</h5>
                                         </div>
                                         <div className="wac-price ndc-bg">
                                           <span className="tier-span">
@@ -1879,7 +1981,6 @@ const fetchContractPricing =()=>{
                                           </span>
                                           <h5 className="">
                                             {list["Max Volume"] ?? "-"}
-                                            
                                           </h5>
                                         </div>
                                       </div>
@@ -1892,10 +1993,7 @@ const fetchContractPricing =()=>{
                                               Price Discount (%)
                                             </span>{" "}
                                           </h5>
-                                          <h5>
-                                            {list["Discount"]}%
-                                            
-                                          </h5>
+                                          <h5>{list["Discount"]}%</h5>
                                         </div>
                                         <div className="ndc-num">
                                           <h5>
@@ -1903,10 +2001,7 @@ const fetchContractPricing =()=>{
                                               Admin Fees(%)
                                             </span>{" "}
                                           </h5>
-                                          <h5>
-                                            {list["Fee"]}%
-                                            
-                                          </h5>
+                                          <h5>{list["Fee"]}%</h5>
                                         </div>
                                         <div className="ndc-num">
                                           <h5>
@@ -1914,10 +2009,7 @@ const fetchContractPricing =()=>{
                                               Rebate(%)
                                             </span>{" "}
                                           </h5>
-                                          <h5>
-                                            {list["Rebate"]}%
-                                           
-                                          </h5>
+                                          <h5>{list["Rebate"]}%</h5>
                                         </div>
                                       </div>
                                     </li>
@@ -1930,57 +2022,66 @@ const fetchContractPricing =()=>{
                           <AccordionItem>
                             <AccordionHeader
                               className="tiered-head"
-                              targetId={extractionEntites?.sections?.length >0? extractionEntites?.sections?.length+2:4}
+                              targetId={
+                                extractionEntites?.sections?.length > 0
+                                  ? extractionEntites?.sections?.length + 2
+                                  : 4
+                              }
                             >
                               Tiered LI
                             </AccordionHeader>
                             <AccordionBody
-                              accordionId={extractionEntites?.sections?.length >0? extractionEntites?.sections?.length+2:4}
+                              accordionId={
+                                extractionEntites?.sections?.length > 0
+                                  ? extractionEntites?.sections?.length + 2
+                                  : 4
+                              }
                               className="tiered-body"
                             >
-                              {pricingList?.length>0 && pricingList?.map((list) => {
-                                return (
-                                  <ul className="acc-list-data tiered">
-                                    <li className="hdr pt-3">
-                                      <div className="d-flex justify-content-between">
-                                        <div className="ndc-num">
-                                          <span>NDC Number</span>
-                                          <h5>{list?.ndc_number}</h5>
-                                        </div>
-                                        <div className="wac-price text-end">
-                                          <span>WAC Price</span>
-                                          <h5 className="text-end">
-                                            {list?.wac_price}
-                                          </h5>
-                                        </div>
-                                      </div>
-                                    </li>
-                                    {list?.tiers?.map((tierData) => {
-                                      return (
-                                        <li className="split-li">
-                                          <div className="d-flex align-items-center justify-content-between tier-split">
-                                            <div className="">
-                                              <h6>Tier {tierData?.tier}</h6>
-                                            </div>
-                                            <div className="">
-                                              <h6>
-                                                <span>Discount:</span>{" "}
-                                                {tierData?.discount}
-                                              </h6>
-                                            </div>
-                                            <div>
-                                              <h6>
-                                                <span>Final Price:</span>{" "}
-                                                {tierData?.final_price}
-                                              </h6>
-                                            </div>
+                              {pricingList?.length > 0 &&
+                                pricingList?.map((list) => {
+                                  return (
+                                    <ul className="acc-list-data tiered">
+                                      <li className="hdr pt-3">
+                                        <div className="d-flex justify-content-between">
+                                          <div className="ndc-num">
+                                            <span>NDC Number</span>
+                                            <h5>{list?.ndc_number}</h5>
                                           </div>
-                                        </li>
-                                      );
-                                    })}
-                                  </ul>
-                                );
-                              })}
+                                          <div className="wac-price text-end">
+                                            <span>WAC Price</span>
+                                            <h5 className="text-end">
+                                             $  {list?.wac_price}
+                                            </h5>
+                                          </div>
+                                        </div>
+                                      </li>
+                                      {list?.tiers?.map((tierData) => {
+                                        return (
+                                          <li className="split-li">
+                                            <div className="d-flex align-items-center justify-content-between tier-split">
+                                              <div className="">
+                                                <h6>Tier {tierData?.tier}</h6>
+                                              </div>
+                                              <div className="">
+                                                <h6>
+                                                  <span>Discount:</span>{" "}
+                                                  {tierData?.discount}%
+                                                </h6>
+                                              </div>
+                                              <div>
+                                                <h6>
+                                                  <span>Final Price:</span>{" "}
+                                                 $  {tierData?.final_price} 
+                                                </h6>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        );
+                                      })}
+                                    </ul>
+                                  );
+                                })}
                             </AccordionBody>
                           </AccordionItem>
                         </Accordion>
@@ -1995,13 +2096,13 @@ const fetchContractPricing =()=>{
                     <div className="p-3 d-flex justify-content-evenly  gap-12 export-btn">
                       <button
                         className="exportxl-btn"
-                        onClick={() => handleExport()}
+                        onClick={() => handleExport("xlsx")}
                       >
                         <img src={fileImg} /> Export as Excel
                       </button>
                       <Button
                         className="exportxl-btn"
-                        onClick={() => downloadAsXml()}
+                        onClick={() => handleExport("xml")}
                       >
                         <img src={xmlImg} /> Export as XML
                       </Button>
@@ -2021,7 +2122,13 @@ const fetchContractPricing =()=>{
                         return (
                           <div
                             className="Comment-details"
-                            onClick={() => handleScrollToNode(list?.node_id,list?.node_index,list?.color)}
+                            onClick={() =>
+                              handleScrollToNode(
+                                list?.node_id,
+                                list?.node_index,
+                                list?.color,
+                              )
+                            }
                           >
                             <div>
                               <div className="Comment-body">
@@ -2219,15 +2326,15 @@ const fetchContractPricing =()=>{
           className="edittierleve"
         >
           <div className="d-flex justify-content-between align-items-center px-4 py-3">
-            <div
-            
-            className="edit-tier-level-title"
-          >
-            Edit Tier Level?
-          </div>
-          <div>
-            <X size={18} color="var(--text)" style={{cursor:'pointer'}} onClick={()=>setIsTierWarning(!isTierWarning)}/>
-          </div>
+            <div className="edit-tier-level-title">Edit Tier Level?</div>
+            <div>
+              <X
+                size={18}
+                color="var(--text)"
+                style={{ cursor: "pointer" }}
+                onClick={() => setIsTierWarning(!isTierWarning)}
+              />
+            </div>
           </div>
           <div className="edite-tierlevel-body">
             Editing the tier level will recalculate and regenerate the Tiered LI
@@ -2245,103 +2352,71 @@ const fetchContractPricing =()=>{
             </div>
           </div>
         </Modal>
-        <Modal isOpen={isTierEdit} centered zIndex={4000}>
+        <Modal size="lg" isOpen={isTierEdit} centered zIndex={4000}>
           <ModalHeader toggle={() => setIsTierEdit(!isTierEdit)}>
-            Edit Tier Level 0{editTierData?.tier_level}
+            Edit Tier Level
           </ModalHeader>
           <ModalBody>
             <div className="container">
-              <div className="row">
-                <div className="col-6 mb-2">
-                  <label>Purchase Volume Min</label>
-                  <div>
-                    <input
-                      className="modal-input"
-                      value={editTierData?.volume_min}
-                      onChange={(e) =>
-                        setEditTierData({
-                          ...editTierData,
-                          volume_min: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="col-6 mb-2">
-                  <label>Purchase Volume Max</label>
-                  <div>
-                    <input
-                      className="modal-input"
-                      value={editTierData?.volume_max}
-                      onChange={(e) =>
-                        setEditTierData({
-                          ...editTierData,
-                          volume_max: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="col-4">
-                  <label>Price Discount (%)</label>
-                  <div>
-                    <input
-                      className="modal-input"
-                      value={editTierData?.discount_percentage}
-                      onChange={(e) =>
-                        setEditTierData({
-                          ...editTierData,
-                          discount_percentage: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="col-4">
-                  <label>Admin Fees (%)</label>
-                  <div>
-                    <input
-                      className="modal-input"
-                      value={editTierData?.admin_fee_percentage}
-                      onChange={(e) =>
-                        setEditTierData({
-                          ...editTierData,
-                          admin_fee_percentage: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="col-4">
-                  <label>Rebate (%)</label>
-                  <div>
-                    <input
-                      className="modal-input"
-                      value={editTierData?.rebate_percentage}
-                      onChange={(e) =>
-                        setEditTierData({
-                          ...editTierData,
-                          rebate_percentage: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="col-12">
-                  <label>Comments (optional)</label>
-                  <div>
-                    <textarea
-                      className="modal-input"
-                      onChange={(e) =>
-                        setEditTierData({
-                          ...editTierData,
-                          comment: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
+              {Array.isArray(editTierData) && editTierData.length > 0 && (
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Tier Level</th>
+                      <th>Min Volume</th>
+                      <th>Max Volume</th>
+                      <th>Discount %</th>
+                      <th>Fee </th>
+                      <th>Rebate %</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {editTierData.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        {Object.keys(row).map((key, colIndex) => (
+                          <td key={colIndex}>
+                            <input
+                              className="entity-input"
+                              type={
+                                typeof row[key] === "number" ? "number" : "text"
+                              }
+                              value={row[key] ?? ""}
+                              onChange={(e) =>
+                                handleEditTierCell(
+                                  rowIndex,
+                                  key,
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <div className="modal-comments-modal">
+                <label>Comment</label>
               </div>
+              <textarea
+                rows={7}
+                value={entityCommnet}
+                placeholder="Type your comment..."
+                onChange={(e) => setEntityComment(e.target.value)}
+                style={{
+                  width: "100%",
+                  background: "var(--white-bg)",
+                  color: "var(--modal-text-area)",
+                  fontSize: "13px",
+                  padding: "8px",
+                  border: "1px solid #374151",
+                  borderRadius: "8px",
+                  resize: "none",
+                  outline: "none",
+                }}
+              />
               <div class="modal-actions">
                 <button
                   class="cancel-btn"
@@ -2353,6 +2428,123 @@ const fetchContractPricing =()=>{
                   Save Changes
                 </button>
               </div>
+            </div>
+          </ModalBody>
+        </Modal>
+
+        <Modal
+          isOpen={isEntityEdit}
+          centered
+          size={typeof entityValue?.value === "string" ? "md" : "lg"}
+          zIndex={4000}
+          style={{
+            padding: "34px",
+          }}
+        >
+          <div className="modal-mark-with">
+            Edit Extracted Entity
+            <img
+              src={closeImg}
+              onClick={() => {
+                setEntityValue(null);
+                setIsEntityEdit(false);
+                setEntityComment("");
+              }}
+            />
+          </div>
+          <ModalBody>
+            <div className="modal-comments-modal">
+              <label>Value</label>
+            </div>
+            <div>
+              {typeof entityValue?.value === "string" && (
+                <input
+                  style={{
+                    backgroundColor: "#0C111D",
+                    width: "300px",
+                    padding: "6px 10px",
+                    border: "1px solid #334155",
+                    borderRadius: "6px",
+                    color: "#fff",
+                    marginBottom: "10px",
+                  }}
+                  value={entityValue?.value}
+                  onChange={(e) => {
+                    setEntityValue({
+                      ...entityValue,
+                      value: e.target.value,
+                    });
+                  }}
+                />
+              )}
+              {Array.isArray(entityValue?.value) && (
+                <table className="table table-bordered">
+                  <thead className="rdx-txt-ai">
+                    <tr>
+                      {entityValue?.columns?.map((col, i) => (
+                        <th key={i}>{col.display_key || col.name}</th>
+                      ))}
+                    </tr>
+                  </thead>
+
+                  <tbody className="rdx-intelli">
+                    {entityValue?.value?.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        {entityValue?.columns?.map((col, colIndex) => (
+                          <td key={colIndex}>
+                            <input
+                              className="entity-input"
+                              value={row[col.name] || ""}
+                              onChange={(e) =>
+                                handleEditCell(
+                                  rowIndex,
+                                  col.name,
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div className="modal-comments-modal">
+              <label>Comment</label>
+            </div>
+            <textarea
+              rows={7}
+              value={entityCommnet}
+              placeholder="Type your comment..."
+              onChange={(e) => setEntityComment(e.target.value)}
+              style={{
+                width: "100%",
+                background: "var(--white-bg)",
+                color: "var(--modal-text-area)",
+                fontSize: "13px",
+                padding: "8px",
+                border: "1px solid #374151",
+                borderRadius: "8px",
+                resize: "none",
+                outline: "none",
+              }}
+            />
+            <div class="modal-actions px-0 py-3">
+              <button
+                class="cancel-btn m-0"
+                onClick={() => {
+                  setEntityValue(null);
+                  setIsEntityEdit(false);
+                  setEntityComment("");
+                }}
+              >
+                Cancel
+              </button>
+              <button class="save-btn m-0" onClick={() => UpdateEntity()}>
+                Save Changes
+              </button>
             </div>
           </ModalBody>
         </Modal>

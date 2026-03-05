@@ -32,7 +32,7 @@ function Topbar() {
 
   const handleLogout = () => {
     instance.logoutRedirect({
-      postLogoutRedirectUri: "https://app.intellicontract.ai.srm-tech.com/", // 🔁 Back to login page or home
+      postLogoutRedirectUri: "https://deepextract.intellicontract.srm-tech.com/", // 🔁 Back to login page or home
     });
     const username = accounts[0]?.name;
     if (username) {
@@ -59,7 +59,7 @@ function Topbar() {
       </div> */}
 
         <span></span>
-        <div className="toggle-button-group-mt ms-2">
+        {/* <div className="toggle-button-group-mt ms-2">
           <button
             className={`toggle-button-mt ${theme === "Light" ? "active" : ""}`}
             onClick={() => theme !== "Dark" && toogleTheme()}
@@ -83,7 +83,7 @@ function Topbar() {
               />
             </span>
           </button>
-        </div>
+        </div> */}
 
         {/* <div>
           <label class="switch">

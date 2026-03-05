@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Layouts from "../Layouts/Layouts";
 import "./entity.css";
 import { Col, Row } from "reactstrap";
+import search from "../../../images/icons/search-history.svg";
 import uploadLight from "./../../../images/icons/uploadlight.svg";
 import uploadImg from "../../../images/icons/upload-ico.svg";
 import editImg from "../../../images/icons/edit-02.svg";
@@ -92,7 +93,8 @@ function ListContract() {
     navigate("/entity-extraction/validation",{
         state:{
           testContract,
-          entities:location?.state?.template
+          entities:location?.state?.template,
+          template_id:location?.state?.template_id ?? null
         }
     })
   }
@@ -102,11 +104,11 @@ function ListContract() {
         <>
           <div className="list-head">
             <h5>New Entity Templates - Select Contract Document</h5>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 align-items-center">
               <div>
                 <img src={stepper2} />
               </div>
-              <div>
+              <div className="d-flex">
                 <button
                   className="contract-upld-btn"
                   onClick={() => navigate("/entity-extraction/new")}
@@ -115,7 +117,7 @@ function ListContract() {
                   Back to Entities
                 </button>
                 <button
-                  className="contract-upld-btn"
+                  className="contract-upld-btn-2"
                   onClick={() => testTemplate()}
                 >
                   Test Template
@@ -128,22 +130,23 @@ function ListContract() {
             <div className="left-head">
               Select a contract document to validate the template
             </div>
-            <div>
-              <input className="list-test-input" />
-            </div>
+            <div class="search-container">
+                        <img className="i" src={search} />
+                        <input type="text" placeholder="Type Document Name, Version... " />
+                      </div>
           </div>
           <div className="table-list-contract">
             <table className="Table-contract-list">
               <thead>
                 <tr className="table-row">
-                  <th className="checkbox-col">
+                  {/* <th className="checkbox-col">
                     <input type="checkbox" />
-                  </th>
-                  <th className="template-col">Document Name</th>
-                  <th className="description-col">Doc Type</th>
-                  <th className="entity-col">Customer</th>
-                  <th className="date-col">Author</th>
-                  <th className="status-col">Generated Date</th>
+                  </th> */}
+                  <th className="template-col">File Name</th>
+                  <th className="description-col">Contract Number</th>
+                  <th className="entity-col">Upload Date</th>
+                  <th className="date-col">Version</th>
+                  {/* <th className="status-col">Generated Date</th>   */}
                   {/* <th className="action-col">Action</th> */}
                 </tr>
               </thead>
@@ -160,7 +163,7 @@ function ListContract() {
                         >
                           <td className="checkbox-col">
                             <input
-                              type="checkbox"
+                              type="radio"
                               checked={list?.contract_id===testContract?.contract_id}
                               onChange={(e) =>{
                                 e.stopPropagation()
@@ -176,8 +179,8 @@ function ListContract() {
                           <td className="description-col">
                             {list?.original_filename?.split('.')?.[1]}
                           </td>
-                          <td className="entity-col text-center">-</td>
-                          <td className="entity-col text-center">-</td>
+                          {/* <td className="entity-col text-center">-</td> */}
+                          {/* <td className="entity-col text-center">-</td> */}
                           <td className="date-col text-center">{list?.uploaded_at &&
                                                           format(new Date(list?.uploaded_at), "dd-MM-yyyy")}
                                                       </td>

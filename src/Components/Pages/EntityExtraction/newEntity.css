@@ -55,6 +55,15 @@ font-weight: 500;
     color: var(--contarct-file-upload-button-font);
     border: 1px solid var(--total-contarct-border);
     border-radius: 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  color: #f5f5f6;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to right, #eb2f96, #722ed1);
 }
 
 .entity-clear{
@@ -233,4 +242,26 @@ margin: 0;
     border-radius: var(--radius-sm, 6px);
     border: 1px solid var(--Component-colors-Utility-Success-utility-success-200, #085D3A);
     background: var(--Component-colors-Utility-Success-utility-success-50, #053321);
+}
+
+
+
+.stepper-width-adjust{
+    width: 180px;
+}
+
+
+.Entity-heading-ukg{
+    font-family: "Inter";
+font-weight: 600;
+font-size: 16px;
+color: #CECFD2;
+}
+
+
+.Tabl-col-header{
+    font-family: "Inter";
+font-weight: 600;
+font-size: 16px;
+    color: #CECFD2;
 }

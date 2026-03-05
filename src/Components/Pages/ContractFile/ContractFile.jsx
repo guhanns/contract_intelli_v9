@@ -3,6 +3,7 @@ import Layouts from "../Layouts/Layouts";
 import "./contractfile.css";
 import { Col, Offcanvas, OffcanvasBody, Row } from "reactstrap";
 import uploadLight from "./../../../images/icons/uploadlight.svg";
+import loading from './../../../images/icons/loading-0122.svg'
 import uploadImg from "../../../images/icons/upload-ico.svg";
 import editImg from "../../../images/icons/edit-02.svg";
 import minusImg from "../../../images/icons/minus-circle.svg";
@@ -22,20 +23,22 @@ import { useTheme } from "../../../Themecontext";
 import { useMsal } from "@azure/msal-react";
 import TableSkeleton from "../../Skeleton-loading/TableSkeloton";
 import upload_doc from "../../../images/upload_icons/upload_doc.svg";
-import purpleUpload from './../../../images/upload_icons/upload_doc_light1.svg';
+import ext_doc from "../../../images/icons/File-extract-search.svg";
+import up_doc from "../../../images/icons/upload-extract.svg";
+import purpleUpload from "./../../../images/upload_icons/upload_doc_light1.svg";
 import ListContract from "../EntityExtraction/ListContract";
 function ContractFile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [templateList,setTemplateList] = useState([])
-  const [selectedTemplate,setSelectedTemplate] = useState({})
+  const [templateList, setTemplateList] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [isTemplate,setIsTemplate] = useState(false)
+  const [isTemplate, setIsTemplate] = useState(false);
   const [contractList, setContractList] = useState([]);
-  const [uploadStatus,setUploadStatus]= useState({})
-  const [contractExtraction,setContractExtraction] = useState({})
+  const [uploadStatus, setUploadStatus] = useState({});
+  const [contractExtraction, setContractExtraction] = useState({});
   const { theme, toogleTheme } = useTheme();
   const { accounts } = useMsal();
 
@@ -53,16 +56,20 @@ function ContractFile() {
     requestL({
       url: "/contracts",
       method: "GET",
+      params:{
+        expand:'full'
+      }
     })
       .then((res) => {
         setIsLoading(false);
-        setContractList(res);
+        setContractList(getContractVersions(res));
+
         dispatch(saveContracts(res));
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
-        setIsError(true)
+        setIsError(true);
       });
   };
 
@@ -79,48 +86,93 @@ function ContractFile() {
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
-        setIsError(true)
+        setIsError(true);
       });
   };
-
-
 
   useEffect(() => {
     getContractList();
     getTemplateList();
   }, []);
 
-  console.log(location)
+  console.log(location);
 
-useEffect(() => {
-  if (!location?.state?.uploadResults) return;
+  const getContractVersions = (contracts) => {
+  const result = [];
 
-  let intervalId;
+  contracts.forEach((contract) => {
+    const amendments = contract.amendments.map((a) => ({
+      contract_id: contract.contract_id,
+      contract_number: contract.contract_number,
+      version_number: a.version_number,
+      amendment_number: a.amendment_number,
+      type: "AMENDMENT",
+      status: a.status,
+      uploaded_at: a.uploaded_at,
+      original_filename: a.original_filename
+    }));
 
-  const fetchStatus = () => {
-    requestL({
-      url: `/contracts/${location?.state?.uploadResults?.[0] ? location?.state?.uploadResults?.[0].data?.contract_id :location?.state?.uploadResults?.contract_id }/status`,
-      method: 'GET',
-      params: {
-        version_number: location?.state?.uploadResults?.[0]? location?.state?.uploadResults?.[0]?.data?.version_number:location?.state?.uploadResults?.version_number
-      }
-    }).then((res) => {
-      setUploadStatus(res);
+    const locAgreements = contract.loc_agreements.map((l) => ({
+      contract_id: contract.contract_id,
+      contract_number: contract.contract_number,
+      version_number: l.version_number,
+      type: "LOC",
+      status: l.status,
+      uploaded_at: l.uploaded_at,
+      original_filename: l.original_filename
+    }));
 
-      if (res?.status === "READY") {
-        clearInterval(intervalId);
-        getContractList()
-      }
-    });
-  };
+    result.push(...amendments, ...locAgreements);
+  });
 
-  fetchStatus();
-  intervalId = setInterval(fetchStatus, 5000);
-  return () => clearInterval(intervalId);
+  return result.sort(
+    (a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at)
+  );
+};
 
-}, [location?.state?.uploadResults]);
+  useEffect(() => {
+    if (!location?.state?.uploadResults) return;
+
+    let intervalId;
+
+    const fetchStatus = () => {
+      let url = `/contracts/${
+  location?.state?.uploadResults?.[0]
+    ? location?.state?.uploadResults?.[0].data?.contract_id
+    : location?.state?.uploadResults?.contract_id
+}/status`;
+
+if (location?.state?.uploadResults?.[0]?.data?.file_type==='LOC_Agreement') {
+  url = `/contracts/${
+    location?.state?.uploadResults?.[0]
+      ? location?.state?.uploadResults?.[0].data?.contract_id
+      : location?.state?.uploadResults?.contract_id
+  }/loc-aggrements`;
+}
 
 
+      requestL({
+        url,
+        method: "GET",
+        params: {
+          version_number: location?.state?.uploadResults?.[0]
+            ? location?.state?.uploadResults?.[0]?.data?.version_number
+            : location?.state?.uploadResults?.version_number,
+        },
+      }).then((res) => {
+        setUploadStatus(res);
+
+        if (res?.status === "READY") {
+          clearInterval(intervalId);
+          getContractList();
+        }
+      });
+    };
+
+    fetchStatus();
+    intervalId = setInterval(fetchStatus, 5000);
+    return () => clearInterval(intervalId);
+  }, [location?.state?.uploadResults]);
 
   const sendtoPreview = (contract, version) => {
     navigate("/list/preview", {
@@ -128,8 +180,7 @@ useEffect(() => {
     });
   };
 
-
-   const handleFileChange = (e, type) => {
+  const handleFileChange = (e, type) => {
     const selectedFiles = Array.from(e.target.files);
     if (!selectedFiles.length) return;
 
@@ -140,47 +191,52 @@ useEffect(() => {
       progress: 0,
     }));
 
-   navigate('/list/upload',{state:{file:newFiles}})
+    navigate("/list/upload", { state: { file: newFiles } });
   };
 
-  console.log(contractExtraction)
+  console.log(contractExtraction);
 
-  const handleExtraction = (e,contract) =>{
-    e.stopPropagation()
-    setIsTemplate(true)
-    setContractExtraction(contract)
-  }
+  const handleExtraction = (e, contract) => {
+    e.stopPropagation();
+    setIsTemplate(true);
+    setContractExtraction(contract);
+  };
 
-  const handleSelectTemplate =(template)=>{
-    setSelectedTemplate(template)
-  }
+  const handleSelectTemplate = (template) => {
+    setSelectedTemplate(template);
+  };
 
-  const handleStartExtraction =()=>{
-
-    if(!selectedTemplate?.template_id){
-      return toast.error("Please Select the Template for Extraction")
+  const handleStartExtraction = () => {
+    if (!selectedTemplate?.template_id) {
+      return toast.error("Please Select the Template for Extraction");
     }
 
     requestL({
-      url:'/extract',
-      method:'POST',
-      data:{
-        contract_id:contractExtraction?.contract_id,
-        template_id:selectedTemplate?.template_id,
-        version_number:contractExtraction?.latest_amendment_number
-      }
-    }).then((res)=>{
-      setIsTemplate(false)
-      navigate('/list/preview',{state:{
-        contract_id:contractExtraction?.contract_id,
-        template_id:selectedTemplate?.template_id,
-        version_number:contractExtraction?.latest_amendment_number,
-        isExtract:true
-      }})
-    }).catch((err)=>{
-      console.log(err)
+      url: "/extract",
+      method: "POST",
+      data: {
+        contract_id: contractExtraction?.contract_id,
+        template_id: selectedTemplate?.template_id,
+        version_number: contractExtraction?.latest_amendment_number,
+      },
     })
-  }
+      .then((res) => {
+        setIsTemplate(false);
+        navigate("/list/preview", {
+          state: {
+            contract_id: contractExtraction?.contract_id,
+            template_id: selectedTemplate?.template_id,
+            version_number: contractExtraction?.latest_amendment_number,
+            isExtract: true,
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  console.log(contractList)
 
   return (
     <Layouts>
@@ -234,59 +290,37 @@ useEffect(() => {
                     <div></div>
                   </div>
                 </div>
-                <div className="table-list-contract">
-                  <table className="Table-contract-list">
-                    <thead>
-                      <tr className="table-row">
-                        {/* <th scope="col" className="check-box-table">
-                        <input type="checkbox" />
-                      </th> */}
-                        <th scope="col" className="doc-boxs">
-                          Document Name
-                        </th>
-
-                        <th scope="col text-center" className="id-box">
-                          Document ID
-                        </th>
-                        <th scope="col text-center" className="type-box">
-                          Doc Type
-                        </th>
-                        <th scope="col text-center" className="ver-box">
-                          Ver. Number
-                        </th>
-                        <th scope="col text-center" className="ver-box">
-                          Created On
-                        </th>
-                        <th scope="col text-center" className="status-box">
-                          Status
-                        </th>
+                <div className="doc-txt-table-cont table-responsive">
+                  <table className="table table-hover align-middle">
+                    <thead className="cs-titles-newone">
+                      <tr>
+                        <th className="cd-titles">File Name</th>
+                        <th className="cd-titles">Contract Number</th>
+                        <th className="cd-titles">Upload Date</th>
+                        <th className="cd-titles">Version</th>
+                        <th className="cd-titles">Contract Status</th>
+                        <th className="cd-titles">Contract Actions</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {/* Show analyzing rows while extracting */}
+
+                    <tbody className="contract-list-body-table">
                       {isExtracting &&
                         location?.state?.files?.length > 0 &&
                         location?.state?.files?.map((li) => (
-                          <tr
-                            className="contract-result-list"
-                            key={li?.file?.name}
-                          >
-                            <td className="doc-boxs" title={li?.file?.name}>
-                              {li?.file?.name}
-                            </td>
-                            <td className="id-box text-center">-</td>
-                            <td className="type-box text-center">-</td>
-                            <td className="ver-box text-center">-</td>
-                            <td className="ver-box text-center">-</td>
-                            <td className="status-box text-center">
-                              <span className="analyse">
+                          <tr key={li?.file?.name}>
+                            <td title={li?.file?.name}>{li?.file?.name}</td>
+                            <td className="text-center">-</td>
+                            <td className="text-center">-</td>
+                            <td className="text-center">-</td>
+                            <td className="text-center">-</td>
+                            <td className="text-center">
+                              <span className="badge bg-warning text-dark">
                                 {uploadStatus?.status}
                               </span>
                             </td>
                           </tr>
                         ))}
 
-                      {/* Show contracts list if available */}
                       {contractList?.length > 0 &&
                         contractList.map((doc) => (
                           <tr
@@ -295,49 +329,76 @@ useEffect(() => {
                               "-" +
                               doc?.latest_amendment_number
                             }
-                            onClick={() =>
-                              sendtoPreview(
-                                doc?.contract_number,
-                                doc?.latest_amendment_number,
-                              )
+                             onClick={() =>
+                              navigate("/list/preview", {
+                                state: {
+                                  contract_id: doc?.contract_id,
+                                  version_number: doc?.version_number,
+                                },
+                              })
                             }
-                            className="contract-result-list"
+                            style={{ cursor: "pointer" }}
                           >
-                            <td className="doc-boxs" title={doc?.document_name}>
+                            <td
+                              className="dxt-first-data"
+                              title={doc?.document_name}
+                            >
                               {doc?.original_filename}
                             </td>
-                            <td className="id-box text-center">
+
+                            <td className="dxt-second-data">
                               {doc?.contract_number}
                             </td>
-                            <td className="type-box text-center">
-                              {doc?.original_filename?.split(".")[1]}
-                            </td>
-                            <td className="ver-box text-center">
-                              {doc?.latest_amendment_number}
-                            </td>
-                            <td className="ver-box text-center">
+
+                            <td className="dxt-second-data">
                               {doc?.uploaded_at &&
                                 format(
                                   new Date(doc?.uploaded_at),
                                   "dd-MM-yyyy",
                                 )}
                             </td>
-                            <td className="status-box text-center">
+
+                            <td className="dxt-second-data">
+                              V{doc?.version_number}.0
+                            </td>
+
+                            <td className="dxt-second-data">
+                              {
+                                doc?.status==="READY" ?    <span className="upload-ready">
+                                Ready
+                              </span> : doc?.status==="PROCESSING" ?  <span className="upload-processing">
+                                Processing 
+                              </span> : doc?.status==='NOT READY' ?  <span className="upload-notready">
+                                Not Ready 
+                              </span> :doc?.status==='FAILED' ? <span className="upload-failed">
+                                Failed 
+                              </span> :""
+                              }
+                            </td>
+
+                            <td className="dxt-second-data">
                               {doc?.status === "READY" ? (
-                                <button
-                                  className="extraction-btn"
+                                <span
+                                  className="extract-btn-docx"
                                   onClick={(e) => handleExtraction(e, doc)}
                                 >
+                                  <img src={ext_doc} />
                                   Extract
-                                </button>
-                              ) : (
-                                <span className="review">
-                                  {uploadStatus?.status === "PROCESSING"
-                                    ? uploadStatus?.stages?.length
-                                      ? uploadStatus?.stages?.[uploadStatus?.stages?.length - 1]?.stage
-                                      : "EXTRACTING"
-                                    : "Uploading"}
                                 </span>
+                              ) : (
+                                doc?.status ==="PROCESSING" ?
+                                <span className="Processing-contract">
+                                  <img src={loading}/>
+                                </span> : 
+                                doc?.status ==="Not Ready"?
+                                      <span className="Processing-contract">
+                                        <img src={loading} />
+                                      </span> :
+                                doc?.status ==="FAILED" ?
+                                <span className="dxt-btn-sec-upload">
+                                  <img src={up_doc} />
+                                  Upload
+                                </span> : "-"
                               )}
                             </td>
                           </tr>
@@ -396,9 +457,9 @@ useEffect(() => {
       <Offcanvas
         direction="end"
         backdrop={true}
-        scrollable={false}
+        scrollable={true}
         style={{
-          width: "60%",
+          width: "65%",
           marginTop: "80px",
           backgroundColor: "#161B26",
 
@@ -414,7 +475,12 @@ useEffect(() => {
                 Select Template - {contractExtraction?.original_filename}
               </div>
               <div>
-                <button className="entity-clear">Cancel</button>
+                <button
+                  className="entity-clear"
+                  onClick={() => setIsTemplate(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   className="extract-btn"
                   onClick={() => handleStartExtraction()}
@@ -423,7 +489,7 @@ useEffect(() => {
                 </button>
               </div>
             </div>
-            <hr />
+            <hr className="border-name-line" />
             <div className="temp-search">
               <div className="head">Select a Template for Extraction</div>
               <div class="search-container temp">
@@ -432,31 +498,43 @@ useEffect(() => {
               </div>
             </div>
             <div className="temp-table">
-              <div class="contract-details-box right ">
+              <div class="contract-details-box right">
                 <div className="contract-acc-box temp list-view">
-                  <table className="tier-table">
-                    <thead>
-                      <th className="sno">Template Name</th>
-                      <th>Description</th>
-                      <th>Entity Count</th>
+                  <table className="table">
+                    <thead className="extract-small-table">
+                      <tr>
+                        <th scope="col">Template Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Entity Count</th>
+                      </tr>
                     </thead>
-                    <tbody>
+
+                    <tbody className="extr-body-radio">
                       {templateList?.length > 0 &&
-                        templateList?.map((list) => {
+                        templateList.map((list) => {
                           return (
-                            <tr onClick={() => handleSelectTemplate(list)}>
+                            <tr
+                              key={list?.template_id}
+                              onClick={() => handleSelectTemplate(list)}
+                              style={{ cursor: "pointer" }}
+                            >
                               <td>
                                 <input
                                   type="radio"
+                                  className="temp-radio"
                                   checked={
                                     selectedTemplate?.template_id ===
                                     list?.template_id
                                   }
-                                  className="temp-radio"
-                                />
-                                {list?.name}
+                                  readOnly
+                                />{" "}
+                                <span className="template-namsan">
+                                  {list?.name}
+                                </span>
                               </td>
+
                               <td>{list?.description}</td>
+
                               <td>{list?.fields?.length ?? 0}</td>
                             </tr>
                           );

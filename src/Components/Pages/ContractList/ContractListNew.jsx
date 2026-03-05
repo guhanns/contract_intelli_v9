@@ -14,6 +14,7 @@ import request from "../../../api/api";
 import gridSel from "./../../../images/icons/Gridwhite-selected.svg";
 import gridnotSel from "./../../../images/icons/Gridwhite-notselected.svg";
 import fileSel from "./../../../images/icons/File-white-selected.svg";
+import docxImg from "../../../images/icons/docx-icon-grid.svg";
 import filenotSel from "./../../../images/icons/File-white-notselected.svg";
 import serachImg from "../../../images/icons/search-sm.svg";
 import fileImg from "../../../images/icons/file-06.svg";
@@ -59,7 +60,7 @@ import ContractDocuments from "../../Skeleton-loading/ContractDocuments";
 import upload_doc from "../../../images/upload_icons/upload_doc.svg";
 import purpleUpload from "./../../../images/upload_icons/upload_doc_light1.svg";
 import requestL from "../../../api/lexi";
-import { Pencil } from "lucide-react";
+import { Pencil, Pointer, Upload } from "lucide-react";
 
 const accordionData = [
   {
@@ -268,6 +269,7 @@ function ContractListNew() {
   const dispatch = useDispatch();
   const { theme, toogleTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedVersions, setSelectedVersions] = useState({});
   const [isError, setIsError] = useState(false);
   const [contractList, setContractList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -387,9 +389,7 @@ function ContractListNew() {
         );
         if (activeContractTab === contract.contract_id) {
           setActiveContractTab(updated.length ? updated[0]?.contract_id : null);
-          setSelectVersion(
-            updated.length ? updated[0]?.latest_amendment_number : null,
-          );
+
           setTemplateList(updated[0]?.templates);
           console.log(updated);
           setTemplateOption(
@@ -447,9 +447,10 @@ function ContractListNew() {
   };
 
   useEffect(() => {
+    // whenever the active tab or selected version changes, re‑fetch details
     if (!activeContractTab) return;
     fetchActiveContractTab("full");
-  }, [activeContractTab]);
+  }, [activeContractTab, selectVersion]);
 
   const handleFilterChange = (e, name) => {
     if (e.target.checked) {
@@ -501,6 +502,16 @@ function ContractListNew() {
     });
   };
 
+  const getVersionStatus = (contract, versionNumber) => {
+    if (!contract?.amendments || contract.amendments.length === 0) {
+      return contract?.status;
+    }
+    const selectedAmendment = contract.amendments.find(
+      (amd) => amd?.version_number === versionNumber
+    );
+    return selectedAmendment?.status || contract?.status;
+  };
+
   const handleFileChange = (e, type) => {
     const selectedFiles = Array.from(e.target.files);
     if (!selectedFiles.length) return;
@@ -548,7 +559,7 @@ function ContractListNew() {
   };
 
   useEffect(() => {
-    if(template){
+    if (template) {
       fetchEntities();
     }
   }, [template, activeContractTab, selectVersion]);
@@ -723,8 +734,9 @@ function ContractListNew() {
                                       setSelectVersion(
                                         list?.latest_amendment_number,
                                       );
-                                      setTemplate(null)
-                                      setExtractionEntites({})
+                                      
+                                      setTemplate(null);
+                                      setExtractionEntites({});
                                     }}
                                     title={list.original_filename}
                                   >
@@ -738,19 +750,34 @@ function ContractListNew() {
                                       <DropdownToggle
                                         caret
                                         className="version-toggle"
+                                        onClick={(e) => {
+                                          // prevent parent div click (which resets version) when toggling menu
+                                          e.stopPropagation();
+                                        }}
                                       >
-                                        V{list?.amendments?.length ?? 0}.0
+                                        {/* show the version for the active contract using state */}
+                                        V
+                                        {activeContractTab === list?.contract_id
+                                          ? selectVersion
+                                          : (list?.amendments?.find(
+                                              (li) =>
+                                                li?.version_number ===
+                                                Number(selectVersion),
+                                            )?.version_number ?? 0)}
+                                        .0
                                       </DropdownToggle>
 
-                                      <DropdownMenu end>
+                                      <DropdownMenu end container="body">
                                         {list?.amendments?.map((amd, index) => (
                                           <DropdownItem
                                             key={index}
-                                            onClick={() =>
+                                            onClick={(e) => {
+                                              // stop propagation so parent onClick doesn't fire
+                                              e.stopPropagation();
                                               setSelectVersion(
                                                 amd?.version_number,
-                                              )
-                                            }
+                                              );
+                                            }}
                                           >
                                             {amd?.version_number}
                                           </DropdownItem>
@@ -782,12 +809,17 @@ function ContractListNew() {
                                 <div className="details-head">
                                   <h3>Contract Details</h3>
 
-                                  <div>
+                                  <div className="contract-select-dpdown">
                                     <Select
                                       styles={colourStyles}
                                       options={templateOption}
                                       placeholder="Select Template"
-                                      value={templateOption?.filter((li)=>li.value===template)}
+                                      value={templateOption?.filter(
+                                        (li) => li.value === template,
+                                      )}
+                                      getOptionLabel={(e) =>
+                                        truncate(e.label, { length: 30 })
+                                      }
                                       onChange={(e) => setTemplate(e.value)}
                                     />
                                   </div>
@@ -812,182 +844,178 @@ function ContractListNew() {
                                     flush
                                     className="contract-acc"
                                   >
-                                    {extractionEntites?.sections?.length > 0
-                                      ? extractionEntites?.sections?.map(
-                                          (sec, secIdx) => {
-                                            return (
-                                              <AccordionItem>
-                                                <AccordionHeader
-                                                  targetId={secIdx + 1}
-                                                >
-                                                  {sec?.section}
-                                                </AccordionHeader>
-                                                <AccordionBody
-                                                  accordionId={secIdx + 1}
-                                                >
-                                                  <ul className="acc-list-data">
-                                                    {sec?.entities?.length > 0
-                                                      ? sec?.entities?.map(
-                                                          (ent, entId) => {
-                                                            return (
-                                                              <li
-                                                                key={entId}
-                                                                className="px-2 contract-offer"
-                                                              >
-                                                                {ent?.format ===
-                                                                  "string" && (
-                                                                  <div className="me-2">
-                                                                    <span className="text-capitalize">
-                                                                      {
-                                                                        ent?.display_key
-                                                                      }
-                                                                    </span>
+                                    {extractionEntites?.sections?.length > 0 ? (
+                                      extractionEntites?.sections?.map(
+                                        (sec, secIdx) => {
+                                          return (
+                                            <AccordionItem>
+                                              <AccordionHeader
+                                                targetId={secIdx + 1}
+                                              >
+                                                {sec?.section}
+                                              </AccordionHeader>
+                                              <AccordionBody
+                                                accordionId={secIdx + 1}
+                                              >
+                                                <ul className="acc-list-data">
+                                                  {sec?.entities?.length > 0
+                                                    ? sec?.entities?.map(
+                                                        (ent, entId) => {
+                                                          return (
+                                                            <li
+                                                              key={entId}
+                                                              className="px-2 contract-offer"
+                                                            >
+                                                              {ent?.format ===
+                                                                "string" && (
+                                                                <div className="me-2">
+                                                                  <span className="text-capitalize">
+                                                                    {
+                                                                      ent?.display_key
+                                                                    } :
+                                                                  </span>
 
-                                                                    <span className="ms-2">
-                                                                      {
-                                                                        ent?.effective_value
-                                                                      }
-                                                                    </span>
-                                                                  </div>
-                                                                )}
+                                                                  <span className="ms-2">
+                                                                    {
+                                                                      ent?.effective_value
+                                                                    }
+                                                                  </span>
+                                                                </div>
+                                                              )}
 
-                                                                {ent?.format ===
-                                                                  "table" && (
+                                                              {ent?.format ===
+                                                                "table" && (
+                                                                <div>
                                                                   <div>
-                                                                    <div>
-                                                                      {
-                                                                        ent?.display_key
-                                                                      }
-                                                                    </div>
-                                                                    <div>
-                                                                      <table>
-                                                                        <thead>
-                                                                          <tr>
-                                                                            {ent
-                                                                              ?.columns
-                                                                              ?.length >
-                                                                              0 &&
-                                                                              ent?.columns?.map(
-                                                                                (
+                                                                    {
+                                                                      ent?.display_key
+                                                                    }
+                                                                  </div>
+                                                                  <div>
+                                                                    <table>
+                                                                      <thead>
+                                                                        <tr>
+                                                                          {ent
+                                                                            ?.columns
+                                                                            ?.length >
+                                                                            0 &&
+                                                                            ent?.columns?.map(
+                                                                              (
+                                                                                li,
+                                                                                colIdx,
+                                                                              ) => {
+                                                                                return (
+                                                                                  <th
+                                                                                    key={
+                                                                                      colIdx
+                                                                                    }
+                                                                                  >
+                                                                                    {
+                                                                                      li?.display_key
+                                                                                    }
+                                                                                  </th>
+                                                                                );
+                                                                              },
+                                                                            )}
+                                                                        </tr>
+                                                                      </thead>
+                                                                      <tbody>
+                                                                        {ent
+                                                                          ?.effective_value
+                                                                          ?.length >
+                                                                          0 &&
+                                                                          ent.effective_value.map(
+                                                                            (
+                                                                              li,
+                                                                              index,
+                                                                            ) => (
+                                                                              <tr
+                                                                                key={
+                                                                                  index
+                                                                                }
+                                                                                style={{
+                                                                                  borderBottom:
+                                                                                    index <
+                                                                                    ent
+                                                                                      .effective_value
+                                                                                      .length -
+                                                                                      1
+                                                                                      ? "1px solid rgba(255,255,255,0.05)"
+                                                                                      : "none",
+                                                                                  backgroundColor:
+                                                                                    index %
+                                                                                      2 ===
+                                                                                    0
+                                                                                      ? "transparent"
+                                                                                      : "rgba(0,0,0,0.02)",
+                                                                                }}
+                                                                              >
+                                                                                {Object.entries(
                                                                                   li,
-                                                                                  colIdx,
-                                                                                ) => {
-                                                                                  return (
-                                                                                    <th
+                                                                                ).map(
+                                                                                  (
+                                                                                    [
+                                                                                      key,
+                                                                                      value,
+                                                                                    ],
+                                                                                    cellIdx,
+                                                                                  ) => (
+                                                                                    <td
                                                                                       key={
-                                                                                        colIdx
+                                                                                        key
                                                                                       }
                                                                                     >
                                                                                       {
-                                                                                        li?.display_key
+                                                                                        value
                                                                                       }
-                                                                                    </th>
-                                                                                  );
-                                                                                },
-                                                                              )}
-                                                                          </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                          {ent
-                                                                            ?.effective_value
-                                                                            ?.length >
-                                                                            0 &&
-                                                                            ent.effective_value.map(
-                                                                              (
-                                                                                li,
-                                                                                index,
-                                                                              ) => (
-                                                                                <tr
-                                                                                  key={
-                                                                                    index
-                                                                                  }
-                                                                                  style={{
-                                                                                    borderBottom:
-                                                                                      index <
-                                                                                      ent
-                                                                                        .effective_value
-                                                                                        .length -
-                                                                                        1
-                                                                                        ? "1px solid rgba(255,255,255,0.05)"
-                                                                                        : "none",
-                                                                                    backgroundColor:
-                                                                                      index %
-                                                                                        2 ===
-                                                                                      0
-                                                                                        ? "transparent"
-                                                                                        : "rgba(0,0,0,0.02)",
-                                                                                  }}
-                                                                                >
-                                                                                  {Object.entries(
-                                                                                    li,
-                                                                                  ).map(
-                                                                                    (
-                                                                                      [
-                                                                                        key,
-                                                                                        value,
-                                                                                      ],
-                                                                                      cellIdx,
-                                                                                    ) => (
-                                                                                      <td
-                                                                                        key={
-                                                                                          key
-                                                                                        }
-                                                                                      >
-                                                                                        {
-                                                                                          value
-                                                                                        }
-                                                                                      </td>
-                                                                                    ),
-                                                                                  )}
-                                                                                </tr>
-                                                                              ),
-                                                                            )}
-                                                                        </tbody>
-                                                                      </table>
-                                                                    </div>
-                                                                  </div>
-                                                                )}
-
-                                                                {ent?.format ===
-                                                                  "date" && (
-                                                                  <div className="me-2">
-                                                                    <span className="text-capitalize">
-                                                                      {
-                                                                        ent?.display_key
-                                                                      }{" "}
-                                                                      :
-                                                                    </span>
-
-                                                                    <span className="ms-2">
-                                                                      {ent?.effective_value
-                                                                        ? format(
-                                                                            new Date(
-                                                                              ent?.effective_value,
+                                                                                    </td>
+                                                                                  ),
+                                                                                )}
+                                                                              </tr>
                                                                             ),
-                                                                            "dd MM yyyy",
-                                                                          )
-                                                                        : ""}
-                                                                    </span>
+                                                                          )}
+                                                                      </tbody>
+                                                                    </table>
                                                                   </div>
-                                                                )}
+                                                                </div>
+                                                              )}
 
-                                                                {/* <div className=" edit">
+                                                              {ent?.format ===
+                                                                "date" && (
+                                                                <div className="me-2">
+                                                                  <span className="text-capitalize">
+                                                                    {
+                                                                      ent?.display_key
+                                                                    }{" "}
+                                                                    :
+                                                                  </span>
+
+                                                                  <span className="ms-2">
+                                                                    {ent?.effective_value
+                                                                     }
+                                                                  </span>
+                                                                </div>
+                                                              )}
+
+                                                              {/* <div className=" edit">
                                                                   <Pencil
                                                                     size={18}
                                                                   />
                                                                 </div> */}
-                                                              </li>
-                                                            );
-                                                          },
-                                                        )
-                                                      : ""}
-                                                  </ul>
-                                                </AccordionBody>
-                                              </AccordionItem>
-                                            );
-                                          },
-                                        )
-                                      : ""}
+                                                            </li>
+                                                          );
+                                                        },
+                                                      )
+                                                    : ""}
+                                                </ul>
+                                              </AccordionBody>
+                                            </AccordionItem>
+                                          );
+                                        },
+                                      )
+                                    ) : (
+                                      <div className="No-data-msg">No Data</div>
+                                    )}
                                   </Accordion>
                                 </div>
                               </div>
@@ -1060,16 +1088,18 @@ function ContractListNew() {
                                   <h3>Product Pricing Table</h3>
                                   <div className="opt-btn">
                                     <span
-                                      onClick={
-                                        pricingList?.length > 0 && handleHideAll
-                                      }
+                                      onClick={() => {
+                                        if (pricingList?.length > 0) {
+                                          handleHideAll();
+                                        }
+                                      }}
                                     >
                                       <img
                                         src={
-                                          open.length > 0 ? eyeCrossImg : eye
+                                          open?.length > 0 ? eyeCrossImg : eye
                                         }
                                       />
-                                      {open.length > 0
+                                      {open?.length > 0
                                         ? "Hide All Tier Details"
                                         : "View All Tier Details"}
                                     </span>
@@ -1092,8 +1122,8 @@ function ContractListNew() {
                                       <thead>
                                         <tr className="head-sticky">
                                           <th width={"20%"}>NDC Number</th>
-                                          <th>Product Number</th>
-                                          <th>Size</th>
+                                          <th>Product Name</th>
+                                          <th></th>
                                           <th>WAC Price</th>
                                         </tr>
                                       </thead>
@@ -1130,7 +1160,7 @@ function ContractListNew() {
                                                 {item?.size}
                                               </div>
                                               <div className="product-header-cell">
-                                                {item?.wac_price}
+                                                ${item?.wac_price}
                                               </div>
                                             </AccordionHeader>
                                             <AccordionBody
@@ -1142,6 +1172,8 @@ function ContractListNew() {
                                                     <tr className="price-th">
                                                       <th>Tier</th>
                                                       <th>Discount</th>
+                                                      <th>Admin Fee</th>
+                                                      <th>Rebate Fee</th>
                                                       <th>Final Price</th>
                                                       <th>Savings</th>
                                                     </tr>
@@ -1152,13 +1184,19 @@ function ContractListNew() {
                                                         <tr key={i}>
                                                           <td>{tier?.tier}</td>
                                                           <td>
-                                                            {tier?.discount}
+                                                            {tier?.discount}%
                                                           </td>
                                                           <td>
-                                                            {tier?.final_price}
+                                                            {tier?.admin_fee}%
+                                                          </td>
+                                                          <td>
+                                                            {tier?.rebate_fee}%
+                                                          </td>
+                                                          <td>
+                                                            ${tier?.final_price}
                                                           </td>
                                                           <td className="savings-amount">
-                                                            {tier?.savings}
+                                                            ${tier?.savings}
                                                           </td>
                                                         </tr>
                                                       ),
@@ -1259,272 +1297,153 @@ function ContractListNew() {
                 ) : (
                   <div className="row grid-card-row">
                     {gridContractData?.length > 0 ? (
-                      gridContractData?.map((list) => {
-                        return (
-                          <div className="col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 p-0">
-                            <div className="grid-card">
-                              <div className="grid-card-head">
-                                <img
-                                  src={theme === "Dark" ? pdfIcon : pdfwhitee}
-                                />
-                                <div className="grid-card-data" 
-                                onClick={()=>{
-                                  navigate('/list/preview',{
-                                    state:{
-                                      contract_id:list?.contract_id,
-                                      version_number:list?.latest_amendment_number
-                                    }
-                                  })
-                                }}
-                                >
-                                  <h3>
-                                    {truncate(list?.original_filename, {
-                                      length: 40,
-                                    })}
-                                  </h3>
-                                  <h6>{list?.contract_number}</h6>
-                                  <div className="doc-version">
-                                    <div className="--v">
-                                      Version - {list?.latest_amendment_number}
+                      gridContractData.map((list) => (
+                        <div
+                          key={list.contract_id}
+                          className="col-sm-12 col-md-6 col-lg-4 col-xl-3 grid-col"
+                        >
+                          <div
+                            className="grid-card"
+                            onClick={() =>
+                              navigate("/list/preview", {
+                                state: {
+                                  contract_id: list?.contract_id,
+                                  version_number:
+                                    selectedVersions[list?.contract_id] ??
+                                    list?.latest_amendment_number,
+                                },
+                              })
+                            }
+                          >
+                            <div className="grid-card-head">
+                              <img src={theme === "Dark" ? docxImg : docxImg} />
+
+                              <div className="grid-card-data">
+                                <h3>
+                                  {truncate(list?.original_filename, {
+                                    length: 40,
+                                  })}
+                                </h3>
+
+                                <h6>{list?.contract_number}</h6>
+
+                                <div className="doc-version ">
+                                  {list?.amendments?.length > 0 ? (
+                                    <div className="">
+                                      <UncontrolledDropdown
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        <DropdownToggle
+                                          caret
+                                          className="contract-list-upld-btn version"
+                                        >
+                                          V{" "}
+                                          {selectedVersions[
+                                            `${list?.contract_id}-amendment`
+                                          ] ?? list?.latest_amendment_number}
+                                          .0
+                                        </DropdownToggle>
+                                        <DropdownMenu className="">
+                                          {list?.amendments?.map(
+                                            (version, idx) => (
+                                              <DropdownItem
+                                                key={idx}
+                                                onClick={() =>
+                                                  setSelectedVersions(
+                                                    (prev) => ({
+                                                      ...prev,
+                                                      [list?.contract_id]:
+                                                        version?.version_number,
+                                                      [`${list?.contract_id}-amendment`]:
+                                                        version?.amendment_number,
+                                                    }),
+                                                  )
+                                                }
+                                              >
+                                                {version?.amendment_number}.0
+                                              </DropdownItem>
+                                            ),
+                                          )}
+                                        </DropdownMenu>
+                                      </UncontrolledDropdown>
                                     </div>
-                                    <div className="status text-center">
-                                      {list?.status}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <hr
-                                style={{
-                                  borderColor:
-                                    theme === "Dark" ? "#eee" : "#333",
-                                  height: 2,
-                                  borderWidth: 1,
-                                  opacity: 0.1,
-                                }}
-                              />
-                              <div className="grid-details">
-                                <div>
-                                  <span className="type">Type</span>{" "}
-                                  <span className="value">
-                                    {list?.file_type}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="type">Uploaded at</span>{" "}
-                                  <span className="value">
-                                    {list?.uploaded_at &&
-                                      format(
-                                        new Date(list?.uploaded_at),
-                                        "dd MMM yyyy",
-                                      )}
+                                  ) : (
+                                    ""
+                                  )}
+
+                                  <span
+                                    className={`status status-${getVersionStatus(list, selectedVersions[list?.contract_id])?.toLowerCase()}`}
+                                  >
+                                    {getVersionStatus(list, selectedVersions[list?.contract_id]) === "PROCESSING"
+                                      ? "Processing..."
+                                      : getVersionStatus(list, selectedVersions[list?.contract_id])
+                                    
+                                      ?.toLowerCase()
+                                      .replace(/^./, (c) => c.toUpperCase())}
                                   </span>
                                 </div>
                               </div>
                             </div>
+
+                            <hr
+                              style={{
+                                borderColor: theme === "Dark" ? "#eee" : "#333",
+                                opacity: 0.08,
+                              }}
+                            />
+
+                            <div className="grid-details">
+                              {/* <div>
+                                <span className="type">File Type</span>
+                                <span className="value">{list?.file_type}</span>
+                              </div> */}
+
+                              <div>
+                                <span className="type">Uploaded at</span>
+                                <span className="value">
+                                  {list?.uploaded_at &&
+                                    format(
+                                      new Date(list?.uploaded_at),
+                                      "dd MMM yyyy",
+                                    )}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        );
-                      })
+                        </div>
+                      ))
                     ) : (
                       <div className="contract-list-err">
-                        {isError ? (
-                          <>
-                            <h4>We couldn’t load your contracts</h4>
-                            <h6>Please refresh the page or try again later.</h6>
-                          </>
-                        ) : (
-                          <>
-                            {!isLoading && !isError && (
-                              <>
-                                <h4>No Contract Found</h4>
-                                <h6>
-                                  Try adjusting your filters or upload a new
-                                  contract.
-                                </h6>
-                                <div class="upload-box contract-files-upload">
-                                  <label
-                                    for="contractUpload"
-                                    class="upload-area"
-                                    style={{ height: 50 }}
-                                  >
-                                    <img
-                                      src={
-                                        theme === "Dark"
-                                          ? upload_doc
-                                          : purpleUpload
-                                      }
-                                      className="upload-img"
-                                    />
-                                    <span class="text-white-50">
-                                      <u className="dottedbox-upload-content">
-                                        Upload Contract Documents
-                                      </u>
-                                    </span>
-                                    <input
-                                      type="file"
-                                      id="contractUpload"
-                                      class="d-none upload-input"
-                                      accept="application/pdf"
-                                      multiple
-                                      onChange={(e) =>
-                                        handleFileChange(e, "contract")
-                                      }
-                                    />
-                                  </label>
-                                </div>
-                              </>
-                            )}
-                          </>
-                        )}
+                        <h4>No Contract Found</h4>
+                        <h6>Try upload a new contract.</h6>
+                        <div className="my-3">
+                          <button className="upld-btn">
+                            <label
+                              for="contractUpload"
+                              // class="upload-area"
+                              style={{ cursor: "pointer" }}
+                            >
+                              <Upload
+                                size={18}
+                                color="#CECFD2"
+                                className="me-2"
+                              />
+                              <span>Upload Document</span>
+                              <input
+                                type="file"
+                                id="contractUpload"
+                                class="d-none upload-input"
+                                accept="application/docx"
+                                multiple
+                                onChange={(e) =>
+                                  handleFileChange(e, "contract")
+                                }
+                              />
+                            </label>
+                          </button>
+                        </div>
                       </div>
                     )}
-
-                    {/* <div className="col-4 p-0">
-                    <div className="grid-card">
-                      <div className="grid-card-head">
-                        <img src={pdfIcon} />
-                        <div className="grid-card-data">
-                          <h3>
-                            {truncate("Premier Health Alliance Agreem", {
-                              length: 25,
-                            })}
-                          </h3>
-                          <h6>SM123456</h6>
-                          <div className="doc-version">
-                            <div className="--v">Version -DOC1.0</div>
-                            <div className="status">Implemented</div>
-                          </div>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="grid-details">
-                        <div>
-                          <span className="type">Type</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                        <div>
-                          <span className="type">Customer</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                        <div>
-                          <span className="type">Author</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="grid-date">
-                        <div className="pe-3">
-                          <div className="start">Start date</div>
-                          <div className="date">
-                            {format(new Date(), "dd MMM yyyy")}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="start">Start date</div>
-                          <div className="date">
-                            {format(new Date(), "dd MMM yyyy")}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-4 p-0">
-                    <div className="grid-card">
-                      <div className="grid-card-head">
-                        <img src={pdfIcon} />
-                        <div className="grid-card-data">
-                          <h3>
-                            {truncate("Premier Health Alliance Agreem", {
-                              length: 25,
-                            })}
-                          </h3>
-                          <h6>SM123456</h6>
-                          <div className="doc-version">
-                            <div className="--v">Version -DOC1.0</div>
-                            <div className="status text-center">Active</div>
-                          </div>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="grid-details">
-                        <div>
-                          <span className="type">Type</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                        <div>
-                          <span className="type">Customer</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                        <div>
-                          <span className="type">Author</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="grid-date">
-                        <div className="pe-3">
-                          <div className="start">Start date</div>
-                          <div className="date">
-                            {format(new Date(), "dd MMM yyyy")}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="start">Start date</div>
-                          <div className="date">
-                            {format(new Date(), "dd MMM yyyy")}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-4 p-0">
-                    <div className="grid-card">
-                      <div className="grid-card-head">
-                        <img src={pdfIcon} />
-                        <div className="grid-card-data">
-                          <h3>
-                            {truncate("Premier Health Alliance Agreem", {
-                              length: 25,
-                            })}
-                          </h3>
-                          <h6>SM123456</h6>
-                          <div className="doc-version">
-                            <div className="--v">Version -DOC1.0</div>
-                            <div className="status text-center">Active</div>
-                          </div>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="grid-details">
-                        <div>
-                          <span className="type">Type</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                        <div>
-                          <span className="type">Customer</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                        <div>
-                          <span className="type">Author</span>{" "}
-                          <span className="value">GPO</span>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="grid-date">
-                        <div className="pe-3">
-                          <div className="start">Start date</div>
-                          <div className="date">
-                            {format(new Date(), "dd MMM yyyy")}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="start">Start date</div>
-                          <div className="date">
-                            {format(new Date(), "dd MMM yyyy")}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
                   </div>
                 )}
               </div>

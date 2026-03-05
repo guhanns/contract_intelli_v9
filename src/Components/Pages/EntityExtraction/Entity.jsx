@@ -140,76 +140,88 @@ function Entity() {
                   </div>
                 </div>
                 <div className="table-list-contract">
-                  <table className="Table-contract-list">
-                    <thead>
-                      <tr className="table-row">
-                        {/* <th scope="col" className="check-box-table">
-                        <input type="checkbox" />
-                      </th> */}
-                        <th scope="col" className="doc-boxs">
-                          Template Name
-                        </th>
-
-                        <th scope="col text-center" className="id-box">
+                  <table className="table">
+                    <thead className="extracting-temp-edit">
+                      <tr>
+                        <th scope="col">Template Name</th>
+                        <th scope="col" className="text-start">
                           Description
                         </th>
-                        <th scope="col text-center" className="type-box">
+                        <th scope="col" className="text-center">
                           Entity Count
                         </th>
-                        <th scope="col text-center" className="ver-box">
+                        <th scope="col" className="text-center">
                           Last modified
                         </th>
-                        <th scope="col text-center" className="ver-box">
+                        <th scope="col" className="text-center">
                           Validation Status
                         </th>
-                        <th scope="col text-center" className="ver-box">
+                        <th scope="col" className="text-center">
                           Action
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {/* Show contracts list if available */}
-                      {templateList?.length > 0 &&
-                        templateList.map((doc) => (
-                            <tr className="contract-result-list" >
-                        <td className="doc-boxs" >{doc?.name}</td>
-                        <td className="id-box text-center">
-                             {doc?.description}
-                            </td>
-                            <td className="ver-box text-center">
-                              {doc?.fields?.length??0}
-                            </td>
-                            <td className="ver-box text-center">
-                              {doc?.updated_at ? format(new Date(doc?.updated_at),'dd-MM-yyyy'):'-'}
-                            
-                            </td>
-                            <td className="status-box text-center">
-                              <span className="review">
-                                Active
-                              </span>
-                            </td>
-                            
-                        <td className="type-box text-center">
-                            <span className="mx-2">
-                                <Eye/>
-                                </span>
-                                 {/* <span className="mx-2">
-                                <Copy/>
-                                </span> */}
-                                 <span className="mx-2" onClick={()=>navigate('/entity-extraction/new',{state:{
-                              tempId:doc?.template_id
-                            }})}>
-                                <Pencil/>
-                                </span>
-                                 <span className="mx-2">
-                                <Trash/>
-                                </span>
 
-                        </td>
-                      </tr>
-                          
-                        ))}
-                      
+                    <tbody className="extracting-temp-edit">
+                      {templateList?.length > 0 ? (
+                        templateList.map((doc) => (
+                          <tr key={doc?.template_id}>
+                            <td className="docs-name-extract">{doc?.name}</td>
+
+                            <td className="text-start">{doc?.description}</td>
+
+                            <td className="text-center">
+                              {doc?.fields?.length ?? 0}
+                            </td>
+
+                            <td className="text-center">
+                              {doc?.updated_at
+                                ? format(
+                                    new Date(doc?.updated_at),
+                                    "dd-MM-yyyy",
+                                  )
+                                : "-"}
+                            </td>
+
+                            <td className="text-center">
+                              <span className="review-validate">Validate</span>
+                            </td>
+
+                            <td className="text-center">
+                              <span className="mx-2">
+                                <Eye size={16} />
+                              </span>
+
+                              {/* <span className="mx-2">
+                                <Copy size={16} />
+                              </span> */}
+
+                              <span
+                                className="mx-2"
+                                onClick={() =>
+                                  navigate("/entity-extraction/new", {
+                                    state: {
+                                      tempId: doc?.template_id,
+                                    },
+                                  })
+                                }
+                              >
+                                <Pencil size={16} />
+                              </span>
+
+                              {/* <span className="mx-2">
+                                <Trash size={16} />
+                              </span> */}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className="text-center">
+                            No Templates Found
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

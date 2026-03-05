@@ -43,6 +43,8 @@ function Upload() {
   const [conflictData,setConflictData] = useState({})
   const [files, setFiles] = useState([]);
   const [isConflict,setIsConflict] = useState(false)
+  const [isContractNum,setIsContractNum] = useState(false)
+  const [errData,setErrData] = useState({})
   const [fileInfo,setFileInfo] = useState({
     contract_number:'',
     file_type:""
@@ -178,9 +180,21 @@ const handleUpload = async () => {
       formData.append("file_type", fileInfo?.file_type);
       formData.append("author", userName);
 
-      const response = await axios.post(`${LexiURL}/upload`, formData);
+      let url = `/upload` 
+
+      if(fileInfo?.file_type === 'LOC_Aggrement'){
+          url = `/contracts/loc-agreement`
+      }
+
+      const response = await axios.post(`${LexiURL}${url}`, formData);
 
       // 🚨 Stop everything if conflict detected
+      if(!response?.data?.found){
+        throw {
+          isContractNum: true,
+          data: response.data,
+        };
+      }
       if (response?.data?.conflict) {
         throw {
           isConflict: true,
@@ -210,6 +224,11 @@ const handleUpload = async () => {
 } catch (err) {
   toast.dismiss();
 
+  if(err?.isContractNum){
+    setIsContractNum(true)
+    setErrData(err?.data)
+  }
+
   // 🔴 Conflict Handling
   if (err?.isConflict) {
     setIsConflict(true);
@@ -219,7 +238,7 @@ const handleUpload = async () => {
 
   // 🔴 General Failure
   console.error("Upload failed:", err);
-  toast.error("Upload failed");
+  // toast.error("Upload failed");
 }
 };
 
@@ -264,10 +283,10 @@ console.log(isUploadReady())
       <div class="container text-center upload-main-box">
         <h2 class="upload-name">Upload Documents</h2>
         <p class="upload-info">
-          Your documents should be uploaded as a PDF file (maximum size 100MB).
-        </p>
+          Your documents should be uploaded as a DOCX file (maximum size 100MB).        </p>
         <>
-          <div class="upload-box">
+        {
+          files?.length <=0 && <div class="upload-box">
             <label
               for="contractUpload"
               class="upload-area"
@@ -279,19 +298,21 @@ console.log(isUploadReady())
               />
               <span class="text-white-50">
                 <span className="dottedbox-upload-content">
-                  Upload New Contract Documents
+                  Upload Document
                 </span>
               </span>
               <input
                 type="file"
                 id="contractUpload"
                 class="d-none upload-input"
-                accept="application/pdf"
+                accept="application/docx"
                 multiple
                 onChange={(e) => handleFileChange(e, "contract")}
               />
             </label>
           </div>
+        }
+          
           <div className="upload-list-box">
             {files
               .filter((f) => f.type === "contract")
@@ -344,6 +365,8 @@ console.log(isUploadReady())
                               color: "var(--text)",
                             }),
                           }}
+                          menuPortalTarget={document.body} 
+                          menuPosition="fixed" 
                           options={typeOption}
                           value={typeOption?.filter(
                             (op) => op.value === fileInfo?.file_type,
@@ -394,7 +417,7 @@ console.log(isUploadReady())
             // disabled={() => isUploadReady()}
             onClick={() => handleUpload()}
           >
-            <Save /> Submit {files?.length} Contract Documents
+            <Save /> Submit {files?.length>1 ? files?.length:''} Contract Document{files?.length>1?'s':''}
           </button>
         ) : (
           ""
@@ -441,6 +464,48 @@ console.log(isUploadReady())
             </div>
             <div className="">
               <button className="cfl-btn">Cancel</button> <button className="upld-amd" onClick={()=>uploadConflicts()}>Upload Amendment</button>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+       <Modal
+        isOpen={isContractNum}
+        centered
+        size="lg"
+        fade={true}
+        backdrop={true}
+        zIndex={4000}
+        style={{
+          padding: "34px",
+        }}
+      >
+        <div className="modal-mark-with">
+          <div className="d-flex align-items-center gap-3">
+            <div className="cfl-bg">
+              <AlertCircle size={17} />
+            </div>
+            <div>Confirmation Required</div>
+          </div>
+
+          <X onClick={() => setIsContractNum(false)} />
+        </div>
+        <ModalBody>
+          <div className="modal-comments-modal">
+            <div>
+              {/* <div></div> */}
+              <div>
+                <span>Contract Number</span> :{" "}
+                {errData?.contract_number}{" "}
+              </div>
+              <div><span>Type</span> : LOC Agreement</div>
+            </div>
+            <div>
+              <p>There is no matching contract available</p>
+              
+            </div>
+            <div className="">
+              <button className="cfl-btn" onClick={()=>setIsContractNum(false)}>Cancel</button>
+               <button className="upld-amd" onClick={()=>setIsContractNum(false)}>Enter Correct Contract Number</button>
             </div>
           </div>
         </ModalBody>
